@@ -1,0 +1,387 @@
+/* ============================
+   FONDO CORPORATIVO CRISTAL
+============================ */
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin: 0;
+    padding: 30px;
+    background: radial-gradient(circle at top, #0097a7 0, #00363a 40%, #001013 100%);
+    color: #e0f7fa;
+    animation: fadeIn 1.2s ease-out;
+}
+
+/* Animación suave */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================
+   SIDEBAR IZQUIERDO
+============================ */
+.sidebar {
+    width: 260px;
+    background: #1e1e2f;
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    bottom: 20px;
+    overflow-y: auto;
+}
+
+.sidebar h3 {
+    margin-top: 0;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.sidebar .alumno-item {
+    padding: 8px 10px;
+    background: #2c2c40;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.sidebar .alumno-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+.sidebar .btn-bano-mini {
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 8px;
+    background: #00838f;
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,150,170,0.4);
+}
+
+.sidebar .btn-bano-mini:hover {
+    transform: scale(1.05);
+}
+
+.sidebar .btn-salud-mini {
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 8px;
+    background: #c62828;
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255,80,80,0.4);
+}
+
+.sidebar .btn-salud-mini:hover {
+    transform: scale(1.05);
+}
+
+/* ⭐ BOTÓN INCIDENCIA */
+.sidebar .btn-incidencia-mini {
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #ff6f00, #ff8f00);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(255,140,0,0.45);
+    transition: 0.2s;
+}
+
+.sidebar .btn-incidencia-mini:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 18px rgba(255,160,0,0.6);
+}
+
+/* ============================
+   ALERTA PARPADEANTE
+============================ */
+@keyframes alertaParpadeo {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.alerta-grande {
+    margin-top:10px;
+    padding:15px;
+    background:rgba(255,0,0,0.35);
+    border:3px solid #ff5252;
+    border-radius:14px;
+    color:#ff8a80;
+    font-size:22px;
+    font-weight:800;
+    text-align:center;
+    text-shadow:0 0 8px rgba(255,0,0,0.6);
+    animation: alertaParpadeo 1.2s infinite ease-in-out;
+}
+
+/* ============================
+   TÍTULO CORPORATIVO PREMIUM
+============================ */
+h1 {
+    font-weight: 700;
+    font-size: 42px;
+    text-align: center;
+    margin-bottom: 5px;
+    letter-spacing: 1.5px;
+    color: #e0f7fa;
+    text-shadow:
+        0 0 10px rgba(0,150,170,0.6),
+        0 0 18px rgba(0,150,170,0.4);
+}
+
+.header-sub {
+    text-align: center;
+    font-size: 18px;
+    margin-top: -5px;
+    margin-bottom: 25px;
+    color: #b2ebf2;
+    font-weight: 400;
+    text-shadow: 0 0 6px rgba(0,150,170,0.4);
+}
+
+/* ============================
+   TARJETAS CRISTAL CORPORATIVAS
+============================ */
+.card {
+    background: rgba(0, 30, 40, 0.55);
+    padding: 22px;
+    border-radius: 18px;
+    margin-top: 25px;
+    border: 1px solid rgba(0, 150, 170, 0.4);
+    box-shadow: 0 0 22px rgba(0,150,170,0.35);
+    backdrop-filter: blur(18px);
+}
+
+/* ============================
+   SELECT
+============================ */
+select {
+    padding: 9px;
+    border-radius: 10px;
+    border: 1px solid #4dd0e1;
+    background: rgba(0,0,0,0.4);
+    color: #e0f7fa;
+}
+
+/* ============================
+   BOTONES CORPORATIVOS
+============================ */
+.btn {
+    padding: 9px 15px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+    color: white;
+}
+
+.btn-ok {
+    background: linear-gradient(90deg, #00838f, #00acc1);
+    box-shadow: 0 0 14px rgba(0,150,170,0.5);
+}
+
+.btn-ok:hover {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 0 20px rgba(0,150,170,0.7);
+}
+
+.btn-warn {
+    background: linear-gradient(90deg, #c62828, #ef6c00);
+    box-shadow: 0 0 14px rgba(198,40,40,0.5);
+}
+
+.btn-disabled {
+    background: #555;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+/* ============================
+   TABLAS CORPORATIVAS
+============================ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: rgba(0, 20, 30, 0.75);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 18px rgba(0,150,170,0.4);
+}
+
+th {
+    background: linear-gradient(90deg, #006064, #00838f);
+    color: #e0f7fa;
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(77,208,225,0.25);
+}
+
+tr:hover td {
+    background: rgba(0,150,170,0.15);
+}
+
+/* ============================
+   EN BAÑO
+============================ */
+.en-banio-item {
+    background: rgba(0, 25, 40, 0.85);
+    padding: 16px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 0 18px rgba(0,150,170,0.45);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ============================
+   MODAL CRISTAL CORPORATIVO
+============================ */
+.modal-bg {
+    display: none;
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-box {
+    background: rgba(0, 30, 40, 0.78);
+    padding: 25px;
+    border-radius: 18px;
+    width: 340px;
+    border: 1px solid rgba(0, 200, 220, 0.45);
+    box-shadow: 0 0 25px rgba(0, 200, 220, 0.35);
+    backdrop-filter: blur(14px);
+    color: #e0f7fa;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.modal-box h3 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #b2ebf2;
+    text-shadow: 0 0 10px rgba(0, 200, 220, 0.5);
+    letter-spacing: 1px;
+}
+
+.modal-box p {
+    margin: 8px 0;
+    font-size: 15px;
+}
+
+.modal-box select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid #4dd0e1;
+    color: #e0f7fa;
+    font-size: 15px;
+    margin-top: 6px;
+    box-shadow: 0 0 12px rgba(0,150,170,0.25);
+}
+
+.modal-box select:focus {
+    outline: none;
+    border-color: #00e5ff;
+    box-shadow: 0 0 18px rgba(0, 229, 255, 0.6);
+}
+
+/* ============================
+   MODAL SESIÓN CADUCADA
+============================ */
+.modal-snc-bg {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+.modal-snc-box {
+    background: #ffffff;
+    width: 360px;
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid #c8d7e1;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    text-align: center;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.modal-snc-box h3 {
+    margin-top: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #005a8d;
+}
+
+.btn-snc {
+    margin-top: 15px;
+    padding: 10px 18px;
+    background: #005a8d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.btn-snc:hover {
+    background: #0073b6;
+}
+
+/* ============================
+   CONTENIDO PRINCIPAL
+============================ */
+.main-content {
+    margin-left: 320px;
+    padding-right: 30px;
+    padding-top: 10px;
+    max-width: calc(100% - 340px);
+    box-sizing: border-box;
+}
+
+.main-content .card,
+.main-content .card-historial {
+    margin-right: 10px;
+    width: 100%;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}

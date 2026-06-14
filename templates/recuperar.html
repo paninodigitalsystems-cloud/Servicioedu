@@ -1,0 +1,19 @@
+<link rel="stylesheet" href="/static/css/recuperar1.css">
+
+<div class="card neon-border">
+    <h2>🔐 Recuperar contraseña</h2>
+
+    <form method="POST">
+        <label>Usuario:</label>
+        <input type="text" name="usuario" required>
+
+        <label>Nombre completo:</label>
+        <input type="text" name="nombre" required>
+
+        <label>Motivo o comentario:</label>
+        <textarea name="comentario" required></textarea>
+
+        <button type="submit" class="btn-enviar">Enviar solicitud</button>
+    </form>
+</div>
+<div id="toast" class="toast">✔ Solicitud enviada correctamente</div>

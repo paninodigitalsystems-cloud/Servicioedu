@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Conserjería</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/panel_conserjeria.css') }}">
+
+    <style>
+    :root {
+        --cons-bg: #0f172a;
+        --cons-panel: #111827;
+        --cons-panel-2: #1f2937;
+        --cons-accent: #3b82f6;
+        --cons-accent-soft: rgba(59,130,246,0.2);
+        --cons-text: #e5e7eb;
+        --cons-text-muted: #9ca3af;
+        --cons-green: #22c55e;
+        --cons-green-soft: rgba(34,197,94,0.18);
+        --cons-radius: 18px;
+        --cons-shadow: 0 14px 40px rgba(0,0,0,0.55);
+    }
+
+    body {
+        margin: 0;
+        background: #020617;
+        color: var(--cons-text);
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .cons-layout {
+        max-width: 960px;
+        margin: 40px auto;
+        padding: 24px;
+        background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+        border-radius: 24px;
+        box-shadow: var(--cons-shadow);
+    }
+
+    /* Header */
+    .cons-header {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .cons-title {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: var(--cons-accent);
+    }
+
+    .cons-subtitle {
+        font-size: 0.95rem;
+        color: var(--cons-text-muted);
+        margin-top: 4px;
+    }
+
+    /* Badge contador */
+    .cons-badge {
+        display: inline-block;
+        margin-top: 10px;
+        background: var(--cons-green-soft);
+        border: 1px solid var(--cons-green);
+        color: var(--cons-green);
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    /* Estado vacío */
+    .cons-empty {
+        text-align: center;
+        color: var(--cons-text-muted);
+        padding: 60px 20px;
+    }
+
+    .cons-empty-icon {
+        font-size: 3rem;
+        margin-bottom: 10px;
+    }
+
+    .cons-empty-text {
+        font-size: 1rem;
+    }
+
+    /* Grid de tarjetas */
+    .cons-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 16px;
+    }
+
+    /* Tarjeta individual */
+    .cons-card {
+        background: var(--cons-panel-2);
+        border-radius: var(--cons-radius);
+        padding: 20px;
+        border: 1px solid rgba(34,197,94,0.4);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Foto / Iniciales */
+    .cons-photo {
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+        border-radius: 50%;
+        background: radial-gradient(circle at top, #4b5563 0, #020617 60%);
+        border: 2px solid rgba(34,197,94,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--cons-green);
+        overflow: hidden;
+    }
+
+    .cons-photo img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* Info */
+    .cons-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .cons-name {
+        font-size: 1rem;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .cons-course {
+        font-size: 0.85rem;
+        color: var(--cons-text-muted);
+        margin-top: 2px;
+    }
+
+    .cons-status {
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--cons-green-soft);
+        border: 1px solid var(--cons-green);
+        color: var(--cons-green);
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+    }
+
+    /* Pulso verde animado */
+    .cons-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--cons-green);
+        animation: pulse 1.6s infinite;
+        flex-shrink: 0;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%       { opacity: 0.4; transform: scale(1.4); }
+    }
+
+    /* Toast */
+    .cons-toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 9999;
+    }
+
+    .cons-toast {
+        background: #020617;
+        border-radius: 12px;
+        padding: 10px 14px;
+        border: 1px solid rgba(148,163,184,0.6);
+        color: var(--cons-text);
+        font-size: 0.9rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+    }
+
+    /* Indicador de refresco */
+    .cons-refresh-hint {
+        text-align: center;
+        margin-top: 18px;
+        font-size: 0.8rem;
+        color: #374151;
+    }
+    </style>
+</head>
+<body>
+
+<div class="cons-layout">
+
+    <header class="cons-header">
+        <div class="cons-title">Panel de Conserjería</div>
+        <div class="cons-subtitle">Alumnos autorizados fuera del aula en este momento</div>
+        <div id="consBadge" class="cons-badge" style="display:none;">0 alumnos fuera</div>
+    </header>
+
+    <section id="consContent">
+        <div class="cons-empty">
+            <div class="cons-empty-icon">⏳</div>
+            <div class="cons-empty-text">Cargando...</div>
+        </div>
+    </section>
+
+    <div class="cons-refresh-hint">Se actualiza automáticamente cada 3 segundos</div>
+
+</div>
+
+<div id="consToastContainer" class="cons-toast-container"></div>
+<script>
+(function(){
+
+    const content        = document.getElementById('consContent');
+    const badge          = document.getElementById('consBadge');
+    const toastContainer = document.getElementById('consToastContainer');
+
+    function consToast(msg){
+        const t = document.createElement('div');
+        t.className = 'cons-toast';
+        t.textContent = msg;
+        toastContainer.appendChild(t);
+        setTimeout(() => {
+            t.style.transition = 'opacity 0.3s, transform 0.3s';
+            t.style.opacity = '0';
+            t.style.transform = 'translateX(10px)';
+            setTimeout(() => t.remove(), 300);
+        }, 3000);
+    }
+
+    function getInitials(nombre){
+        return nombre.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    function renderLista(alumnos){
+
+        // BADGE
+        if(alumnos.length > 0){
+            badge.style.display = 'inline-block';
+            badge.textContent = alumnos.length === 1
+                ? '1 alumno fuera'
+                : `${alumnos.length} alumnos fuera`;
+        } else {
+            badge.style.display = 'none';
+        }
+
+        // VACÍO
+        if(alumnos.length === 0){
+            content.innerHTML = `
+                <div class="cons-empty">
+                    <div class="cons-empty-icon">✅</div>
+                    <div class="cons-empty-text">Ningún alumno autorizado fuera del aula ahora mismo</div>
+                </div>
+            `;
+            return;
+        }
+
+        // TARJETAS
+        const cards = alumnos.map(a => {
+            const initials = getInitials(a.nombre || 'A');
+            const foto = a.foto_url
+                ? `<img src="${a.foto_url}" alt="${a.nombre}">`
+                : initials;
+
+            return `
+                <div class="cons-card">
+                    <div class="cons-photo">${foto}</div>
+                    <div class="cons-info">
+                        <div class="cons-name">${a.nombre || '—'}</div>
+                        <div class="cons-course">${a.curso || '—'}</div>
+                        <div class="cons-status">
+                            <span class="cons-dot"></span>
+                            AUTORIZADO
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        content.innerHTML = `<div class="cons-grid">${cards}</div>`;
+    }
+
+    function cargarAutorizados(){
+        fetch('/conserjeria/autorizados')
+            .then(r => r.json())
+            .then(data => {
+                if(data.ok){
+                    renderLista(data.alumnos);
+                } else {
+                    consToast(data.error || 'Error al cargar alumnos');
+                }
+            })
+            .catch(() => {
+                consToast('Error de conexión con el servidor');
+            });
+    }
+
+    // Carga inicial
+    cargarAutorizados();
+
+    // Refresco automático
+    setInterval(cargarAutorizados, 3000);
+
+})();
+</script>
+
+
+</body>
+</html>

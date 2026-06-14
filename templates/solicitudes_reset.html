@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="/static/css/tde_cursos.css">
+
+<div class="reset-wrapper">
+
+    <div class="reset-header">
+        <div class="reset-icon">🔔</div>
+        <h2>Solicitudes de recuperación</h2>
+        <p class="reset-sub">Usuarios que han solicitado restablecer su contraseña</p>
+    </div>
+
+    <div class="reset-card neon-border">
+        <table class="reset-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Comentario</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for s in solicitudes %}
+                <tr>
+                    <td>{{ s.id }}</td>
+                    <td>{{ s.usuario }}</td>
+                    <td>{{ s.nombre }}</td>
+                    <td>{{ s.comentario }}</td>
+                    <td>
+                        <form action="/aprobar_reset/{{ s.id }}" method="POST">
+                            <button class="btn-reset-futurista">Aprobar y resetear</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if solicitudes|length == 0 %}
+        <div class="no-solicitudes">
+            <span>✔ No hay solicitudes pendientes</span>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- POPUP HOLOGRÁFICO -->
+<div id="popup-reset" class="popup-overlay">
+    <div class="popup-window">
+        <h2>🔐 Contraseña temporal generada</h2>
+
+        <p class="popup-user">Usuario: <span id="popup-usuario"></span></p>
+
+        <div class="popup-pass" id="popup-pass"></div>
+
+        <button class="popup-copy" onclick="copiarPass()">📋 Copiar</button>
+
+        <button class="popup-close" onclick="cerrarPopup()">Cerrar</button>
+    </div>
+</div>
+
+<script>
+function mostrarPopup(usuario, pass) {
+    document.getElementById("popup-usuario").textContent = usuario;
+    document.getElementById("popup-pass").textContent = pass;
+    document.getElementById("popup-reset").classList.add("active");
+}
+
+function cerrarPopup() {
+    document.getElementById("popup-reset").classList.remove("active");
+}
+
+function copiarPass() {
+    const pass = document.getElementById("popup-pass").textContent;
+    navigator.clipboard.writeText(pass);
+}
+</script>
+
+<!-- ACTIVAR POPUP AUTOMÁTICAMENTE SI HAY CONTRASEÑA -->
+{% if popup_usuario and popup_pass %}
+<script>
+    mostrarPopup("{{ popup_usuario }}", "{{ popup_pass }}");
+</script>
+{% endif %}

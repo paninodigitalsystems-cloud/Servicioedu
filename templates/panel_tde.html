@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ServicioEDU · Panel TDE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:          #0c0f14;
+  --surface-1:   #13181f;
+  --surface-2:   #191f29;
+  --surface-3:   #1f2734;
+  --border:      rgba(255,255,255,0.07);
+  --border-hi:   rgba(255,255,255,0.14);
+
+  --text-pri:    #f0f4f9;
+  --text-sec:    #7f8fa6;
+  --text-ter:    #4a5568;
+
+  --blue:        #3b82f6;
+  --blue-glow:   rgba(59,130,246,0.18);
+  --blue-dim:    rgba(59,130,246,0.10);
+  --teal:        #14b8a6;
+  --teal-glow:   rgba(20,184,166,0.18);
+  --amber:       #f59e0b;
+  --amber-glow:  rgba(245,158,11,0.18);
+  --rose:        #f43f5e;
+  --rose-glow:   rgba(244,63,94,0.18);
+  --emerald:     #10b981;
+  --emerald-glow:rgba(16,185,129,0.18);
+  --violet:      #8b5cf6;
+  --violet-glow: rgba(139,92,246,0.18);
+
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   18px;
+  --radius-xl:   24px;
+
+  --font:        'DM Sans', sans-serif;
+  --font-mono:   'DM Mono', monospace;
+
+  --sidebar-w:   220px;
+  --topbar-h:    60px;
+
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 8px 32px rgba(0,0,0,0.25);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text-pri);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: var(--topbar-h);
+  overflow-x: hidden;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.022; pointer-events: none; z-index: 9999;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--font); cursor: pointer; }
+
+/* TOPBAR */
+.topbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--topbar-h);
+  background: rgba(12,15,20,0.92);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 24px; gap: 16px;
+  z-index: 8000;
+}
+
+.logo-mark {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--violet), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: white;
+  box-shadow: 0 0 20px rgba(139,92,246,0.35);
+  flex-shrink: 0;
+}
+
+.logo-name { font-size: 15px; font-weight: 600; color: var(--text-pri); letter-spacing: -0.3px; }
+.logo-name span { color: var(--violet); }
+
+.topbar-divider { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
+
+.topbar-breadcrumb { font-size: 13px; color: var(--text-sec); }
+.topbar-breadcrumb strong { color: var(--text-pri); font-weight: 500; }
+
+.topbar-spacer { flex: 1; }
+
+.topbar-clock {
+  font-family: var(--font-mono);
+  font-size: 13px; color: var(--text-sec);
+  padding: 5px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.topbar-profile {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 10px 5px 5px;
+  border-radius: 12px; border: 1px solid var(--border);
+  background: var(--surface-2); cursor: pointer;
+  transition: all 0.15s ease;
+}
+.topbar-profile:hover { border-color: var(--border-hi); background: var(--surface-3); }
+
+.avatar {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--violet), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: white; flex-shrink: 0;
+}
+
+.profile-name { font-size: 13px; font-weight: 500; }
+.profile-role { font-size: 11px; color: var(--text-sec); font-family: var(--font-mono); }
+
+/* LAYOUT */
+.app-layout {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - var(--topbar-h));
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface-1);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: var(--topbar-h);
+  height: calc(100vh - var(--topbar-h));
+  overflow-y: auto;
+  display: flex; flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-3) transparent;
+}
+
+.sidebar-section { padding: 20px 12px 8px; }
+
+.sidebar-label {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-ter); padding: 0 8px; margin-bottom: 6px;
+}
+
+.nav-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 500;
+  color: var(--text-sec);
+  transition: all 0.15s ease;
+  margin-bottom: 2px;
+  border: 1px solid transparent;
+}
+
+.nav-link:hover {
+  background: var(--surface-2);
+  color: var(--text-pri);
+  border-color: var(--border);
+}
+
+.nav-link.active {
+  background: var(--surface-2);
+  color: var(--text-pri);
+  border-color: var(--border-hi);
+}
+
+.nav-link.active .nav-icon-wrap {
+  box-shadow: 0 0 10px rgba(139,92,246,0.3);
+}
+
+.nav-icon-wrap {
+  width: 28px; height: 28px;
+  border-radius: 8px; background: var(--surface-3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.nav-link:hover .nav-icon-wrap { background: var(--surface-3); }
+
+.nav-badge {
+  margin-left: auto;
+  padding: 2px 7px; border-radius: 999px;
+  font-size: 10px; font-weight: 700;
+  font-family: var(--font-mono);
+  background: rgba(244,63,94,0.15);
+  color: var(--rose);
+  border: 1px solid rgba(244,63,94,0.2);
+}
+
+.sidebar-divider {
+  height: 1px; background: var(--border);
+  margin: 8px 12px;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-logout {
+  width: 100%; padding: 9px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(244,63,94,0.2);
+  background: transparent; color: #fb7185;
+  font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: all 0.15s ease; cursor: pointer;
+}
+
+.btn-logout:hover {
+  background: var(--rose-glow); border-color: var(--rose); color: var(--rose);
+}
+
+/* MAIN */
+.main {
+  flex: 1; min-width: 0;
+  padding: 28px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+/* PAGE HEADER */
+.page-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 20px;
+}
+
+.page-title {
+  font-size: 24px; font-weight: 700;
+  color: var(--text-pri); letter-spacing: -0.5px; line-height: 1.15;
+}
+
+.page-subtitle { font-size: 13px; color: var(--text-sec); margin-top: 3px; }
+
+.alert-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(244,63,94,0.08);
+  border: 1px solid rgba(244,63,94,0.2);
+  color: var(--rose);
+  font-size: 13px; font-weight: 600;
+  transition: all 0.15s ease; cursor: pointer;
+  animation: alert-pulse 2.5s infinite;
+  text-decoration: none;
+}
+
+.alert-badge:hover {
+  background: rgba(244,63,94,0.14);
+  border-color: var(--rose);
+}
+
+@keyframes alert-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244,63,94,0); }
+  50%       { box-shadow: 0 0 0 4px rgba(244,63,94,0.12); }
+}
+
+.alert-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--rose);
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* STATS ROW */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.stat-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  text-decoration: none; display: block;
+}
+
+.stat-card:hover { border-color: var(--border-hi); transform: translateY(-1px); }
+
+.stat-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.stat-card.violet::before { background: linear-gradient(90deg, var(--violet), var(--blue)); }
+.stat-card.blue::before   { background: linear-gradient(90deg, var(--blue), var(--teal)); }
+.stat-card.amber::before  { background: linear-gradient(90deg, var(--amber), #fb923c); }
+.stat-card.rose::before   { background: linear-gradient(90deg, var(--rose), #ec4899); }
+.stat-card.emerald::before{ background: linear-gradient(90deg, var(--emerald), var(--teal)); }
+
+.stat-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; margin-bottom: 12px;
+}
+
+.stat-card.violet .stat-icon { background: var(--violet-glow); }
+.stat-card.blue   .stat-icon { background: var(--blue-dim); }
+.stat-card.amber  .stat-icon { background: var(--amber-glow); }
+.stat-card.rose   .stat-icon { background: var(--rose-glow); }
+.stat-card.emerald .stat-icon{ background: var(--emerald-glow); }
+
+.stat-value {
+  font-size: 28px; font-weight: 700;
+  line-height: 1; letter-spacing: -1px;
+  font-family: var(--font-mono);
+}
+
+.stat-card.violet .stat-value { color: var(--violet); }
+.stat-card.blue   .stat-value { color: var(--blue); }
+.stat-card.amber  .stat-value { color: var(--amber); }
+.stat-card.rose   .stat-value { color: var(--rose); }
+.stat-card.emerald .stat-value{ color: var(--emerald); }
+
+.stat-label { font-size: 12px; color: var(--text-sec); margin-top: 4px; font-weight: 500; }
+.stat-arrow {
+  position: absolute; top: 18px; right: 16px;
+  font-size: 14px; color: var(--text-ter);
+  transition: color 0.15s, transform 0.15s;
+}
+.stat-card:hover .stat-arrow { color: var(--text-sec); transform: translateX(2px); }
+
+/* SECTION GRID */
+.section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* CARD */
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.card-header {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 12px;
+}
+
+.card-title-group { display: flex; align-items: center; gap: 10px; }
+
+.card-icon {
+  width: 32px; height: 32px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+
+.card-title { font-size: 14px; font-weight: 600; color: var(--text-pri); letter-spacing: -0.2px; }
+.card-subtitle { font-size: 11px; color: var(--text-sec); margin-top: 1px; }
+
+.card-badge {
+  padding: 3px 9px; border-radius: 999px;
+  font-size: 11px; font-weight: 600; font-family: var(--font-mono);
+}
+
+.card-body { padding: 16px 22px; }
+
+/* HISTORY TABLE */
+.history-table {
+  width: 100%; border-collapse: separate; border-spacing: 0 4px;
+}
+
+.history-table thead th {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-ter); padding: 4px 12px; text-align: left;
+}
+
+.history-table tbody tr {
+  background: var(--surface-2); border-radius: var(--radius-sm);
+  transition: background 0.15s;
+}
+.history-table tbody tr:hover { background: var(--surface-3); }
+
+.history-table tbody td {
+  padding: 10px 12px; font-size: 13px; color: var(--text-sec);
+}
+
+.history-table tbody td:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  color: var(--text-pri); font-weight: 500;
+}
+.history-table tbody td:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.status-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: 11px; font-weight: 600;
+}
+.status-pill.salida  { background: rgba(245,158,11,0.12); color: var(--amber); }
+.status-pill.regreso { background: rgba(16,185,129,0.12); color: var(--emerald); }
+.status-pill.ausente { background: rgba(148,163,184,0.1); color: #94a3b8; }
+
+.time-mono { font-family: var(--font-mono); font-size: 12px; }
+
+/* AI CARD */
+.ai-input-area {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  color: var(--text-pri);
+  font-size: 14px; font-family: var(--font);
+  resize: vertical; min-height: 80px; width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  line-height: 1.6;
+}
+.ai-input-area::placeholder { color: var(--text-ter); }
+.ai-input-area:focus {
+  outline: none; border-color: var(--violet);
+  box-shadow: 0 0 0 3px var(--violet-glow);
+}
+
+.ai-footer {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-top: 10px; gap: 12px;
+}
+
+.ai-hint { font-size: 11px; color: var(--text-ter); }
+.ai-hint span { color: var(--violet); }
+
+.btn-ai-send {
+  display: flex; align-items: center; gap: 7px;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  border: none;
+  background: linear-gradient(135deg, var(--violet), #6366f1);
+  color: white; font-size: 13px; font-weight: 600;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 14px rgba(139,92,246,0.3);
+  flex-shrink: 0; cursor: pointer;
+}
+.btn-ai-send:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(139,92,246,0.45); }
+
+.ai-response-wrap {
+  margin-top: 14px; padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(139,92,246,0.05);
+  border: 1px solid rgba(139,92,246,0.15);
+  display: none;
+}
+
+.ai-response-label {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--violet); margin-bottom: 7px;
+  display: flex; align-items: center; gap: 5px;
+}
+
+.ai-response-text { font-size: 13.5px; color: var(--text-sec); line-height: 1.7; }
+
+/* HALL OF FAME BANNER */
+.hof-banner {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(251,146,60,0.05));
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.hof-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.04), transparent);
+  animation: hof-shimmer 3s infinite;
+}
+@keyframes hof-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.hof-banner:hover {
+  border-color: var(--amber);
+  background: linear-gradient(135deg, rgba(245,158,11,0.13), rgba(251,146,60,0.08));
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(245,158,11,0.15);
+}
+.hof-trophy {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: rgba(245,158,11,0.15);
+  border: 1px solid rgba(245,158,11,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; flex-shrink: 0;
+}
+.hof-text { flex: 1; }
+.hof-title { font-size: 15px; font-weight: 700; color: var(--amber); letter-spacing: -0.2px; }
+.hof-desc  { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
+.hof-arrow {
+  font-size: 20px; color: var(--amber); opacity: 0.6;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.hof-banner:hover .hof-arrow { transform: translateX(4px); opacity: 1; }
+
+/* EMPTY STATE */
+.empty-state {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 28px 20px; gap: 8px; text-align: center;
+}
+.empty-icon { font-size: 28px; opacity: 0.4; margin-bottom: 4px; }
+.empty-title { font-size: 13px; font-weight: 500; color: var(--text-sec); }
+
+/* MODAL */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  z-index: 100000; align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal-box {
+  background: var(--surface-1);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-xl);
+  width: 400px; max-width: 95vw; overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  animation: slide-up 0.2s ease;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+.modal-title  { font-size: 16px; font-weight: 700; color: var(--text-pri); }
+.modal-subtitle { font-size: 13px; color: var(--text-sec); margin-top: 3px; }
+.modal-body   { padding: 20px 24px; }
+.modal-footer {
+  padding: 16px 24px; border-top: 1px solid var(--border);
+  display: flex; gap: 10px; justify-content: flex-end;
+}
+
+.btn { padding: 9px 18px; border-radius: var(--radius-sm); border: none; font-size: 13px; font-weight: 600; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-family: var(--font); }
+.btn-primary { background: var(--violet); color: white; box-shadow: 0 4px 14px rgba(139,92,246,0.3); }
+.btn-primary:hover { background: #7c3aed; }
+.btn-ghost { background: var(--surface-2); color: var(--text-sec); border: 1px solid var(--border-hi); }
+.btn-ghost:hover { background: var(--surface-3); color: var(--text-pri); }
+.btn-danger { background: rgba(244,63,94,0.12); color: var(--rose); border: 1px solid rgba(244,63,94,0.2); }
+.btn-danger:hover { background: rgba(244,63,94,0.2); border-color: var(--rose); }
+
+.profile-modal-header {
+  background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(59,130,246,0.06));
+  padding: 28px; border-bottom: 1px solid var(--border); text-align: center;
+}
+.profile-avatar-lg {
+  width: 64px; height: 64px; border-radius: 18px;
+  background: linear-gradient(135deg, var(--violet), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 700; color: white;
+  margin: 0 auto 14px;
+  box-shadow: 0 0 30px rgba(139,92,246,0.3);
+}
+.profile-modal-name { font-size: 18px; font-weight: 700; color: var(--text-pri); }
+.profile-modal-role {
+  display: inline-block; margin-top: 6px; padding: 3px 12px;
+  border-radius: 999px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  background: var(--violet-glow); color: var(--violet);
+  border: 1px solid rgba(139,92,246,0.2);
+}
+.profile-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.profile-row:last-child { border-bottom: none; }
+.profile-row-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.profile-row-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-ter); margin-bottom: 1px; }
+.profile-row-val   { font-size: 14px; color: var(--text-pri); font-weight: 500; }
+
+.form-field { margin-bottom: 14px; }
+.form-label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-sec); margin-bottom: 6px; }
+.form-input { width: 100%; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-hi); background: var(--surface-2); color: var(--text-pri); font-size: 14px; font-family: var(--font); transition: border-color 0.15s, box-shadow 0.15s; }
+.form-input:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px var(--violet-glow); }
+.form-error { font-size: 12px; color: var(--rose); margin-top: -10px; margin-bottom: 10px; display: none; }
+
+/* TOAST */
+.toast-container {
+  position: fixed; top: 76px; right: 20px;
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 200000; pointer-events: none;
+}
+.toast {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: var(--radius-md);
+  background: var(--surface-1); border: 1px solid var(--border-hi);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  animation: toast-in 0.25s ease forwards;
+  pointer-events: all; min-width: 280px; max-width: 360px;
+}
+@keyframes toast-in { from{transform:translateX(20px);opacity:0} to{transform:translateX(0);opacity:1} }
+.toast.success { border-color: rgba(16,185,129,0.3); }
+.toast.error   { border-color: rgba(244,63,94,0.3); }
+.toast-msg { font-size: 13px; font-weight: 500; color: var(--text-pri); }
+
+/* ANIMATIONS */
+.fade-up { animation: fade-up 0.4s ease both; }
+@keyframes fade-up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.10s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.20s; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo-mark">SE</div>
+  <div class="logo-name">Servicio<span>EDU</span></div>
+  <div class="topbar-divider"></div>
+  <div class="topbar-breadcrumb">
+    <strong>TDE Command Center</strong> · Coordinador
+  </div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-clock" id="clock">--:--</div>
+  <div class="topbar-profile" onclick="abrirPerfil()">
+    <div class="avatar">{{ usuario[0]|upper if usuario else 'C' }}</div>
+    <div>
+      <div class="profile-name">{{ usuario }}</div>
+      <div class="profile-role">coordinador</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+{% if mensaje_ok %}
+<script>document.addEventListener("DOMContentLoaded",()=>showToast('success','✅','{{ mensaje_ok }}'));</script>
+{% endif %}
+
+<!-- APP LAYOUT -->
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Gestión</div>
+
+      <a href="/panel_tde" class="nav-link active">
+        <div class="nav-icon-wrap">🏠</div>
+        Inicio
+      </a>
+      <a href="/gestion_profesores" class="nav-link">
+        <div class="nav-icon-wrap">👨‍🏫</div>
+        Profesores
+      </a>
+      <a href="/gestion_alumnos" class="nav-link">
+        <div class="nav-icon-wrap">🎓</div>
+        Alumnos
+      </a>
+      <a href="/gestion_cursos" class="nav-link">
+        <div class="nav-icon-wrap">📘</div>
+        Cursos
+      </a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sistema</div>
+
+      <a href="/registros" class="nav-link">
+        <div class="nav-icon-wrap">🧾</div>
+        Registros
+      </a>
+      <a href="/dashboard" class="nav-link">
+        <div class="nav-icon-wrap">📊</div>
+        Estadísticas
+      </a>
+      {% if pendientes > 0 %}
+      <a href="/solicitudes_reset" class="nav-link">
+        <div class="nav-icon-wrap">🔑</div>
+        Solicitudes
+        <span class="nav-badge">{{ pendientes }}</span>
+      </a>
+      {% else %}
+      <a href="/solicitudes_reset" class="nav-link">
+        <div class="nav-icon-wrap">🔑</div>
+        Solicitudes
+      </a>
+      {% endif %}
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Extra</div>
+      <a href="/hall_of_fame" class="nav-link">
+        <div class="nav-icon-wrap">🏆</div>
+        Hall of Fame
+      </a>
+    </div>
+
+    <div class="sidebar-bottom">
+      <button class="btn-logout" onclick="abrirModalLogout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- Header -->
+    <div class="page-header fade-up">
+      <div>
+        <div class="page-title">TDE Command Center</div>
+        <div class="page-subtitle">Bienvenido, {{ usuario }} — panel de coordinación</div>
+      </div>
+      {% if pendientes > 0 %}
+      <a href="/solicitudes_reset" class="alert-badge">
+        <div class="alert-dot"></div>
+        {{ pendientes }} solicitud{{ 'es' if pendientes > 1 else '' }} pendiente{{ 's' if pendientes > 1 else '' }}
+      </a>
+      {% endif %}
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row fade-up delay-1">
+      <a href="/gestion_profesores" class="stat-card violet">
+        <div class="stat-icon">👨‍🏫</div>
+        <div class="stat-value">—</div>
+        <div class="stat-label">Profesores</div>
+        <div class="stat-arrow">→</div>
+      </a>
+      <a href="/gestion_alumnos" class="stat-card blue">
+        <div class="stat-icon">🎓</div>
+        <div class="stat-value">—</div>
+        <div class="stat-label">Alumnos</div>
+        <div class="stat-arrow">→</div>
+      </a>
+      <a href="/gestion_cursos" class="stat-card amber">
+        <div class="stat-icon">📘</div>
+        <div class="stat-value">—</div>
+        <div class="stat-label">Cursos</div>
+        <div class="stat-arrow">→</div>
+      </a>
+      <a href="/solicitudes_reset" class="stat-card rose">
+        <div class="stat-icon">🔑</div>
+        <div class="stat-value">{{ pendientes }}</div>
+        <div class="stat-label">Solicitudes reset</div>
+        <div class="stat-arrow">→</div>
+      </a>
+    </div>
+
+    <!-- Hall of Fame Banner -->
+    <a href="/hall_of_fame" class="hof-banner fade-up delay-1">
+      <div class="hof-trophy">🏆</div>
+      <div class="hof-text">
+        <div class="hof-title">Hall of Fame del Baño</div>
+        <div class="hof-desc">Rankings, récords épicos y estadísticas curiosas del alumnado · ¿Quién tiene el récord?</div>
+      </div>
+      <div class="hof-arrow">→</div>
+    </a>
+
+    <!-- Historial + AI -->
+    <div class="section-grid fade-up delay-2">
+
+      <!-- Historial reciente -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon" style="background:var(--teal-glow)">🕒</div>
+            <div>
+              <div class="card-title">Historial reciente</div>
+              <div class="card-subtitle">Últimas 6 actividades registradas</div>
+            </div>
+          </div>
+          <a href="/registros" style="font-size:12px; color:var(--text-ter); transition:color 0.15s" onmouseover="this.style.color='var(--text-sec)'" onmouseout="this.style.color='var(--text-ter)'">
+            Ver todo →
+          </a>
+        </div>
+        <div class="card-body" style="padding:12px 16px; overflow-x:auto">
+          {% if historial_reciente %}
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Alumno</th>
+                <th>Estado</th>
+                <th>Salida</th>
+                <th>Regreso</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in historial_reciente %}
+              <tr>
+                <td><span style="font-family:var(--font-mono);color:var(--text-ter);font-size:12px">{{ r['id'] }}</span></td>
+                <td>{{ r['alumno'] }}</td>
+                <td>
+                  <span class="status-pill {{ r['estado'] }}">
+                    {% if r['estado'] == 'regreso' %}🟢{% elif r['estado'] == 'salida' %}🟡{% else %}⚪{% endif %}
+                    {{ r['estado']|capitalize }}
+                  </span>
+                </td>
+                <td><span class="time-mono">{{ r['hora_salida'] or '—' }}</span></td>
+                <td><span class="time-mono">{{ r['hora_regreso'] or '—' }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">📄</div>
+            <div class="empty-title">Sin actividad reciente</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Asistente IA -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon" style="background:var(--violet-glow)">✨</div>
+            <div>
+              <div class="card-title">Asistente IA</div>
+              <div class="card-subtitle">Asesoría para decisiones de coordinación</div>
+            </div>
+          </div>
+          <div class="card-badge" style="background:var(--violet-glow);color:var(--violet);font-size:11px">Beta</div>
+        </div>
+        <div class="card-body">
+          <textarea id="ia-input" class="ai-input-area" placeholder="Ej: ¿Cómo gestiono las solicitudes de reset pendientes?"></textarea>
+          <div class="ai-footer">
+            <div class="ai-hint">Sugerencias: <span>solicitudes</span>, <span>historial</span>, <span>cola</span>, <span>sistema</span></div>
+            <button id="ia-send" class="btn-ai-send">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Preguntar
+            </button>
+          </div>
+          <div id="ia-response" class="ai-response-wrap">
+            <div class="ai-response-label"><span>✨</span> Respuesta del asistente</div>
+            <div id="ia-response-text" class="ai-response-text"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Accesos rápidos -->
+    <div class="card fade-up delay-3">
+      <div class="card-header">
+        <div class="card-title-group">
+          <div class="card-icon" style="background:var(--blue-dim)">⚡</div>
+          <div>
+            <div class="card-title">Accesos rápidos</div>
+            <div class="card-subtitle">Secciones de uso frecuente</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px">
+        {% set links = [
+          ('/gestion_profesores', '👨‍🏫', 'Profesores',  'Alta, baja y edición', 'violet'),
+          ('/gestion_alumnos',    '🎓',   'Alumnos',     'Gestión del alumnado', 'blue'),
+          ('/gestion_cursos',     '📘',   'Cursos',      'Grupos y asignaturas', 'amber'),
+          ('/registros',          '🧾',   'Registros',   'Log del sistema',      'teal'),
+          ('/dashboard',          '📊',   'Estadísticas','Datos y gráficas',     'emerald'),
+          ('/solicitudes_reset',  '🔑',   'Solicitudes', 'Recuperar accesos',    'rose'),
+          ('/hall_of_fame',       '🏆',   'Hall of Fame','Rankings del baño',    'amber'),
+        ] %}
+        {% for url, icon, title, desc, color in links %}
+        <a href="{{ url }}" style="
+          display:flex; align-items:center; gap:12px;
+          padding:13px 15px;
+          background:var(--surface-2);
+          border:1px solid var(--border);
+          border-radius:var(--radius-md);
+          text-decoration:none;
+          transition:all 0.15s ease;
+        "
+        onmouseover="this.style.borderColor='var(--border-hi)';this.style.background='var(--surface-3)'"
+        onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)'"
+        >
+          <div style="
+            width:34px;height:34px;border-radius:9px;
+            display:flex;align-items:center;justify-content:center;
+            font-size:17px; flex-shrink:0;
+            background:var(--{{ color }}-glow, var(--blue-dim));
+          ">{{ icon }}</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-pri)">{{ title }}</div>
+            <div style="font-size:11px;color:var(--text-ter)">{{ desc }}</div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL LOGOUT -->
+<div class="modal-overlay" id="modalLogout">
+  <div class="modal-box" style="width:360px">
+    <div class="modal-header">
+      <div class="modal-title">Cerrar sesión</div>
+      <div class="modal-subtitle">¿Seguro que quieres salir del panel TDE?</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrarModalLogout()">Cancelar</button>
+      <form action="/logout" method="post" style="margin:0">
+        <button class="btn btn-danger" type="submit">Cerrar sesión</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PERFIL -->
+<div class="modal-overlay" id="modalPerfil">
+  <div class="modal-box" style="width:440px">
+    <div class="profile-modal-header">
+      <div class="profile-avatar-lg">{{ usuario[0]|upper if usuario else 'C' }}</div>
+      <div class="profile-modal-name" id="perfil-nombre">{{ usuario }}</div>
+      <div class="profile-modal-role">Coordinador TDE</div>
+    </div>
+    <div class="modal-body" id="perfil-body">
+      <div style="text-align:center;padding:16px;color:var(--text-ter);font-size:13px">Cargando datos...</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="abrirCambiarPw()">🔑 Cambiar contraseña</button>
+      <button class="btn btn-primary" onclick="cerrarPerfil()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIAR PW -->
+<div class="modal-overlay" id="modalPw">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">🔑 Cambiar contraseña</div>
+      <div class="modal-subtitle">Introduce tu contraseña actual y elige una nueva</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label class="form-label">Contraseña actual</label>
+        <input type="password" id="pw-actual" class="form-input" placeholder="••••••••">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Nueva contraseña</label>
+        <input type="password" id="pw-nueva" class="form-input" placeholder="••••••••">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Confirmar nueva contraseña</label>
+        <input type="password" id="pw-confirmar" class="form-input" placeholder="••••••••">
+      </div>
+      <div class="form-error" id="pw-error"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrarCambiarPw()">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitCambiarPw()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script>
+(function(){
+  const el = document.getElementById('clock');
+  function tick() {
+    const d = new Date();
+    el.textContent = d.toLocaleTimeString('es-ES', {hour:'2-digit',minute:'2-digit'});
+  }
+  setInterval(tick, 1000); tick();
+})();
+
+function showToast(type, icon, msg) {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${icon}</span><span class="toast-msg">${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(() => {
+    t.style.transition = 'opacity 0.3s, transform 0.3s';
+    t.style.opacity = '0'; t.style.transform = 'translateX(20px)';
+    setTimeout(() => t.remove(), 300);
+  }, 3500);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+function abrirModalLogout() { document.getElementById('modalLogout').classList.add('open'); }
+function cerrarModalLogout(){ document.getElementById('modalLogout').classList.remove('open'); }
+
+function abrirPerfil() {
+  document.getElementById('modalPerfil').classList.add('open');
+  fetch('/perfil_datos')
+    .then(r => r.json())
+    .then(d => {
+      if (d.nombre_completo) document.getElementById('perfil-nombre').textContent = d.nombre_completo;
+      const rows = [
+        {icon:'👤',label:'Usuario',         val:d.usuario||'—'},
+        {icon:'📛',label:'Nombre completo', val:d.nombre_completo||'—'},
+        {icon:'✉️', label:'Email',           val:d.email||'—'},
+        {icon:'🎓',label:'Rol',             val:d.rol||'—'},
+        {icon:'🏫',label:'Centro',          val:d.centro||'—'},
+        {icon:'📅',label:'Último acceso',   val:d.ultimo_acceso||'—'},
+      ];
+      document.getElementById('perfil-body').innerHTML = rows.map(r => `
+        <div class="profile-row">
+          <div class="profile-row-icon">${r.icon}</div>
+          <div>
+            <div class="profile-row-label">${r.label}</div>
+            <div class="profile-row-val">${r.val}</div>
+          </div>
+        </div>`).join('');
+    })
+    .catch(() => {
+      document.getElementById('perfil-body').innerHTML =
+        '<div style="text-align:center;padding:16px;color:var(--rose)">Error al cargar.</div>';
+    });
+}
+
+function cerrarPerfil() { document.getElementById('modalPerfil').classList.remove('open'); }
+
+function abrirCambiarPw() {
+  cerrarPerfil();
+  ['pw-actual','pw-nueva','pw-confirmar'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('pw-error').style.display='none';
+  document.getElementById('modalPw').classList.add('open');
+}
+function cerrarCambiarPw() { document.getElementById('modalPw').classList.remove('open'); }
+
+function submitCambiarPw() {
+  const actual=document.getElementById('pw-actual').value.trim();
+  const nueva=document.getElementById('pw-nueva').value.trim();
+  const confirmar=document.getElementById('pw-confirmar').value.trim();
+  const err=document.getElementById('pw-error');
+  err.style.display='none';
+  if (!actual||!nueva||!confirmar){err.textContent='Rellena todos los campos.';err.style.display='block';return;}
+  if (nueva!==confirmar){err.textContent='Las contraseñas no coinciden.';err.style.display='block';return;}
+  if (nueva.length<6){err.textContent='Mínimo 6 caracteres.';err.style.display='block';return;}
+  fetch('/cambiar_password_perfil',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({actual,nueva,confirmar})
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.ok){cerrarCambiarPw();showToast('success','✅','Contraseña cambiada correctamente');}
+    else{err.textContent=d.error||'Error.';err.style.display='block';}
+  })
+  .catch(()=>{err.textContent='Error de conexión.';err.style.display='block';});
+}
+
+(function(){
+  const faq = [
+    {t:["solicitud","reset","contraseña","restablecer","recuperar"],
+     r:"Accede a Solicitudes en el menú lateral. Atiende primero las más antiguas. Al aprobar una, se genera una contraseña temporal que debes comunicar al profesor por un canal seguro."},
+    {t:["historial","registro","actividad","log","auditoría"],
+     r:"El historial completo está en Registros. Úsalo para auditar acciones, detectar patrones de uso anómalo o revisar incidencias pasadas con evidencia documentada."},
+    {t:["cola","baño","espera","alumno","profesor"],
+     r:"Las colas en tiempo real las gestiona cada profesor desde su panel. Desde aquí puedes consultar el historial global si necesitas revisar incidencias del día."},
+    {t:["curso","grupo","clase","asignatura"],
+     r:"En Gestión de Cursos puedes crear, editar y eliminar grupos. Asegúrate de que cada alumno esté asignado correctamente a su curso antes de autorizar accesos."},
+    {t:["sistema","técnico","estado","error","fallo","panel"],
+     r:"Para diagnóstico técnico, el Panel Técnico (accesible con rol 'tecnico') muestra el estado de BD, colas activas y registros del sistema en tiempo real."},
+    {t:["estadística","dato","informe","gráfica","resumen","mes"],
+     r:"Las estadísticas en el Dashboard muestran actividad mensual y distribución por curso. Úsalas para preparar informes de seguimiento o reuniones de equipo."},
+    {t:["profesor","añadir","crear","eliminar","rol","acceso"],
+     r:"En Gestión de Profesores puedes crear cuentas, asignar roles (profesor, tde, técnico) y resetear contraseñas. Usa roles con criterio: solo asigna 'tde' o 'técnico' a quien lo necesite."},
+    {t:["hall","fame","ranking","récord","baño"],
+     r:"El Hall of Fame muestra los rankings del alumnado: quién más veces ha ido al baño, quién tiene el récord de tiempo, curiosidades y estadísticas divertidas. Accede desde el menú o el banner de inicio."},
+    {t:["hola","ayuda","qué puedes","para qué","cómo funciona"],
+     r:"Soy el asistente TDE. Puedo orientarte sobre: solicitudes de reset, gestión de profesores y alumnos, historial, estadísticas y estado del sistema. ¿En qué te ayudo?"},
+  ];
+
+  document.getElementById('ia-send').addEventListener('click', function(){
+    const q = document.getElementById('ia-input').value.trim().toLowerCase();
+    const wrap = document.getElementById('ia-response');
+    const txt  = document.getElementById('ia-response-text');
+    if(!q){ showToast('error','⚠️','Escribe tu consulta primero.'); return; }
+    const found = faq.find(f => f.t.some(trigger => q.includes(trigger)));
+    wrap.style.display = 'block';
+    txt.textContent = found
+      ? found.r
+      : 'Revisa las solicitudes pendientes, consulta el historial y usa el Panel Técnico si necesitas diagnosticar el sistema.';
+  });
+})();
+</script>
+
+</body>
+</html>

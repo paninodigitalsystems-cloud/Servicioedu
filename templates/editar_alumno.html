@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Alumno</title>
+    <link rel="stylesheet" href="/static/css/tde_holo.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="titulo">✎ Editar Alumno</h1>
+    <p class="subtitulo">Interfaz holográfica de modificación del alumnado</p>
+
+    <a href="/gestion_alumnos" class="btn-volver">⟵ Volver a la gestión</a>
+
+    <div class="card holo-border">
+
+        <form action="/update_alumno" method="POST">
+
+            <input type="hidden" name="id" value="{{ alumno.id }}">
+
+            <label>Nombre del alumno</label>
+            <input type="text" name="nombre" value="{{ alumno.nombre }}" required>
+
+            <label>Curso</label>
+            <input type="text" name="curso" value="{{ alumno.curso }}" required>
+
+            <button class="btn-guardar">💾 Guardar cambios</button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

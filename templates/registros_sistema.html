@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registros del Sistema</title>
+    <link rel="stylesheet" href="/static/css/tde_holo.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="titulo">🧿 Registros del Sistema</h1>
+    <p class="subtitulo">Visor holográfico de actividad — Centro de Control TDE</p>
+
+    <a href="/panel_tde" class="btn-volver">⟵ Volver al Panel Central</a>
+
+    <div class="card holo-border">
+        <h2>📡 Actividad reciente</h2>
+
+        <table class="tabla holograma">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Acción</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for r in registros %}
+                <tr>
+                    <td>{{ r.id }}</td>
+                    <td>{{ r.usuario }}</td>
+                    <td>{{ r.accion }}</td>
+                    <td>{{ r.fecha }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

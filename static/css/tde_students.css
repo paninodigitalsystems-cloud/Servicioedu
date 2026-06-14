@@ -1,0 +1,261 @@
+/* ============================================
+   FONDO PROFESIONAL IES PREMIUM
+   ============================================ */
+
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #e9eef5 0%, #d4dce6 100%);
+    background-attachment: fixed;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    color: #1f2937;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+    opacity: 0.06;
+    pointer-events: none;
+}
+
+/* ============================================
+   CONTENEDOR PRINCIPAL
+   ============================================ */
+
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+    backdrop-filter: blur(8px);
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   CABECERA INSTITUCIONAL AZUL PREMIUM
+   ============================================ */
+
+.titulo {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin-bottom: 5px;
+}
+
+.subtitulo {
+    font-size: 16px;
+    color: #475569;
+    margin-bottom: 20px;
+}
+
+.btn-volver {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #1e3a8a;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.btn-volver:hover {
+    background: #274bb8;
+}
+
+/* ============================================
+   TARJETAS PREMIUM
+   ============================================ */
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+    margin-bottom: 30px;
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #1e3a8a;
+}
+
+/* ============================================
+   TABLA PREMIUM
+   ============================================ */
+
+.tabla {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+}
+
+.tabla thead {
+    background: linear-gradient(90deg, #1e3a8a, #274bb8);
+}
+
+.tabla th {
+    padding: 14px 18px;
+    color: white;
+    font-weight: 600;
+    text-align: left;
+}
+
+.tabla td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #eef1f5;
+}
+
+.tabla tr:nth-child(even) {
+    background: #f7f9fc;
+}
+
+.tabla tr:hover {
+    background: #e3e9ff;
+    transition: 0.2s ease;
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+
+.btn-editar {
+    padding: 6px 12px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.btn-editar:hover {
+    background: #1e40af;
+}
+
+.btn-eliminar-masivo {
+    padding: 8px 14px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-eliminar-masivo:hover {
+    background: #991b1b;
+}
+
+.btn-select-all {
+    padding: 8px 14px;
+    background: #475569;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-select-all.active {
+    background: #1e3a8a;
+}
+
+/* ============================================
+   BOTÓN FLOTANTE ESTILO GOOGLE CLASSROOM
+   ============================================ */
+
+.btn-flotante {
+    position: fixed;
+    bottom: 35px;
+    right: 35px;
+    background: #1e3a8a;
+    color: white;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    transition: 0.2s ease;
+}
+
+.btn-flotante:hover {
+    background: #274bb8;
+    transform: scale(1.08);
+}
+
+/* ============================================
+   PAGINACIÓN PREMIUM
+   ============================================ */
+
+.paginacion {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pag-btn {
+    padding: 8px 14px;
+    background: #e5e7eb;
+    color: #1f2937;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    border: 1px solid #d1d5db;
+    transition: 0.2s ease;
+}
+
+.pag-btn:hover {
+    background: #d1d5db;
+}
+
+.pag-btn.activa {
+    background: #1e3a8a;
+    color: white;
+    border-color: #1e3a8a;
+}
+
+/* ============================================
+   MODO OSCURO INSTITUCIONAL
+   ============================================ */
+
+body.dark {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+body.dark .container {
+    background: rgba(30, 41, 59, 0.85);
+    color: #e2e8f0;
+}
+
+body.dark .tabla {
+    background: #1e293b;
+}
+
+body.dark .tabla th {
+    background: #0f172a;
+}
+
+body.dark .tabla td {
+    color: #e2e8f0;
+}
+
+body.dark .btn-flotante {
+    background: #334155;
+}

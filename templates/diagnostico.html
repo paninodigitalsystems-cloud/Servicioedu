@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnóstico del Sistema</title>
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR igual al panel_tecnico -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🛠️</span>
+            <span class="logo-text">MANTENIMIENTO</span>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/panel_tecnico"  class="sidebar-link">🛠️ Panel técnico</a>
+            <a href="/diagnostico"    class="sidebar-link active">🔧 Diagnóstico</a>
+            <a href="/sistema"        class="sidebar-link">📦 Sistema</a>
+            <a href="/registros"      class="sidebar-link">📄 Reportes</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/logout" class="sidebar-link logout-link">🚪 Cerrar sesión</a>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1 class="titulo-3d">Diagnóstico del Sistema</h1>
+                <p class="welcome">Panel técnico — {{ usuario }}</p>
+            </div>
+            <div class="topbar-right">
+                <div class="status-indicator {% if bd_ok %}ok{% else %}error{% endif %}">
+                    {% if bd_ok %}🟢 BD operativa{% else %}🔴 BD con error{% endif %}
+                </div>
+                <div class="clock" id="clock"></div>
+            </div>
+        </header>
+
+        <!-- Estado en tiempo real -->
+        <section class="realtime-grid">
+            <div class="rt-card green">
+                <div class="rt-num">{{ en_banio_ahora }}</div>
+                <div class="rt-label">Alumnos en baño ahora</div>
+            </div>
+            <div class="rt-card {% if cola_ahora > 3 %}red{% elif cola_ahora > 0 %}yellow{% else %}green{% endif %}">
+                <div class="rt-num">{{ cola_ahora }}</div>
+                <div class="rt-label">En cola del baño</div>
+            </div>
+            <div class="rt-card blue">
+                <div class="rt-num">{{ salud_ahora }}</div>
+                <div class="rt-label">Alumnos en salud</div>
+            </div>
+            <div class="rt-card {% if modo_mantenimiento %}red{% else %}green{% endif %}">
+                <div class="rt-num">{{ '🔒' if modo_mantenimiento else '✅' }}</div>
+                <div class="rt-label">Modo mantenimiento</div>
+            </div>
+        </section>
+
+        <div class="diag-grid">
+
+            <!-- Test de conectividad BD -->
+            <div class="diag-card">
+                <div class="diag-card-header">
+                    <span class="diag-icon">🗄️</span>
+                    <h3>Base de datos</h3>
+                    <span class="badge {% if bd_ok %}badge-ok{% else %}badge-error{% endif %}">
+                        {% if bd_ok %}OPERATIVA{% else %}ERROR{% endif %}
+                    </span>
+                </div>
+                <div class="diag-rows">
+                    <div class="diag-row">
+                        <span>Latencia de consulta</span>
+                        <span class="val {% if latencia_bd > 100 %}warn{% elif latencia_bd < 0 %}error{% endif %}">
+                            {% if latencia_bd >= 0 %}{{ latencia_bd }} ms{% else %}N/A{% endif %}
+                        </span>
+                    </div>
+                    <div class="diag-row">
+                        <span>Tamaño del archivo</span>
+                        <span class="val">{{ bd_size_kb }} KB</span>
+                    </div>
+                    <div class="diag-row">
+                        <span>Tablas detectadas</span>
+                        <span class="val">{{ tablas|length }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conteos de datos -->
+            <div class="diag-card">
+                <div class="diag-card-header">
+                    <span class="diag-icon">📊</span>
+                    <h3>Volumen de datos</h3>
+                </div>
+                <div class="diag-rows">
+                    <div class="diag-row"><span>Profesores</span><span class="val">{{ total_profesores }}</span></div>
+                    <div class="diag-row"><span>Alumnos</span><span class="val">{{ total_alumnos }}</span></div>
+                    <div class="diag-row"><span>Cursos</span><span class="val">{{ total_cursos }}</span></div>
+                    <div class="diag-row"><span>Registros historial</span><span class="val">{{ total_historial }}</span></div>
+                    <div class="diag-row"><span>Solicitudes reset</span><span class="val">{{ total_solicitudes }}</span></div>
+                </div>
+            </div>
+
+            <!-- Info del servidor -->
+            <div class="diag-card">
+                <div class="diag-card-header">
+                    <span class="diag-icon">🖥️</span>
+                    <h3>Servidor</h3>
+                </div>
+                <div class="diag-rows">
+                    <div class="diag-row"><span>Python</span><span class="val">{{ servidor_info.python }}</span></div>
+                    <div class="diag-row"><span>Sistema operativo</span><span class="val">{{ servidor_info.os }}</span></div>
+                    <div class="diag-row"><span>Hostname</span><span class="val">{{ servidor_info.hostname }}</span></div>
+                    <div class="diag-row"><span>Arquitectura</span><span class="val">{{ servidor_info.arch }}</span></div>
+                </div>
+            </div>
+
+            <!-- Integridad de tablas -->
+            <div class="diag-card span2">
+                <div class="diag-card-header">
+                    <span class="diag-icon">🧪</span>
+                    <h3>Integridad de tablas</h3>
+                    {% set fallos = tests_tablas | selectattr("ok", "equalto", false) | list %}
+                    <span class="badge {% if fallos %}badge-warn{% else %}badge-ok{% endif %}">
+                        {% if fallos %}{{ fallos|length }} FALTANTES{% else %}TODO OK{% endif %}
+                    </span>
+                </div>
+                <div class="tabla-checks">
+                    {% for t in tests_tablas %}
+                    <div class="check-item {% if t.ok %}ok{% else %}fail{% endif %}">
+                        <span class="check-dot">{% if t.ok %}✔{% else %}✘{% endif %}</span>
+                        <span class="check-name">{{ t.tabla }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Últimas acciones -->
+            <div class="diag-card span2">
+                <div class="diag-card-header">
+                    <span class="diag-icon">🕒</span>
+                    <h3>Últimas acciones registradas</h3>
+                </div>
+                {% if ultimas_acciones %}
+                <table class="diag-table">
+                    <thead>
+                        <tr><th>#</th><th>Alumno</th><th>Estado</th><th>Hora salida</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for a in ultimas_acciones %}
+                        <tr>
+                            <td>{{ a['id'] }}</td>
+                            <td>{{ a['alumno'] }}</td>
+                            <td><span class="pill {{ 'pill-ok' if a['estado'] == 'regreso' else 'pill-warn' }}">{{ a['estado'] }}</span></td>
+                            <td>{{ a['hora_salida'] or '—' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="empty">Sin acciones registradas.</p>
+                {% endif %}
+            </div>
+
+        </div><!-- /diag-grid -->
+
+    </main>
+</div>
+
+<style>
+:root {
+    color-scheme: dark;
+    --bg: #080a12;
+    --panel: rgba(12,18,42,0.85);
+    --border: rgba(151,191,255,0.18);
+    --accent: #49c5ff;
+    --text: #e8f1ff;
+    --muted: #94a8c5;
+    --shadow: 0 30px 90px rgba(0,0,0,0.35);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"Inter","Segoe UI",sans-serif;background:radial-gradient(circle at top left,rgba(33,107,211,0.24),transparent 25%),radial-gradient(circle at bottom right,rgba(125,34,255,0.18),transparent 18%),linear-gradient(180deg,#05070e 0%,#06070d 45%,#0b1120 100%);color:var(--text);}
+body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:80px 80px;pointer-events:none;opacity:.25;}
+.layout{min-height:100vh;display:grid;grid-template-columns:280px minmax(0,1fr);gap:18px;padding:24px;}
+.sidebar{background:rgba(10,15,35,0.95);border:1px solid rgba(255,255,255,0.08);box-shadow:var(--shadow);border-radius:32px;padding:28px 20px;display:flex;flex-direction:column;gap:28px;}
+.sidebar-logo{display:flex;align-items:center;gap:14px;}
+.logo-icon{font-size:1.9rem;padding:14px;border-radius:16px;background:linear-gradient(135deg,rgba(73,197,255,0.16),rgba(138,61,255,0.14));}
+.logo-text{font-size:1.1rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;}
+.sidebar-menu{display:grid;gap:10px;}
+.sidebar-link{display:block;padding:14px 18px;border-radius:18px;color:var(--text);text-decoration:none;background:rgba(255,255,255,0.03);border:1px solid transparent;transition:transform .2s,background .2s,border-color .2s;}
+.sidebar-link:hover,.sidebar-link.active{background:rgba(73,197,255,0.14);border-color:rgba(73,197,255,.4);transform:translateX(4px);}
+.sidebar-footer{margin-top:auto;}
+.logout-link{color:#ff7d7d;background:rgba(255,125,125,0.12);}
+.main{display:flex;flex-direction:column;gap:22px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 30px;border-radius:32px;background:rgba(10,15,35,0.92);border:1px solid rgba(255,255,255,0.06);box-shadow:var(--shadow);}
+.titulo-3d{margin:0;font-size:2rem;letter-spacing:.05em;text-transform:uppercase;color:#cdf1ff;text-shadow:0 0 20px rgba(73,197,255,.35);}
+.welcome{margin:8px 0 0;color:var(--muted);}
+.status-indicator{padding:10px 16px;border-radius:999px;font-weight:700;letter-spacing:.04em;}
+.status-indicator.ok{background:rgba(47,192,255,0.12);color:#b3ecff;}
+.status-indicator.error{background:rgba(255,80,80,0.15);color:#ffa0a0;}
+.clock{font-family:"Roboto Mono",monospace;font-size:1.1rem;color:#87d8ff;}
+
+/* Realtime grid */
+.realtime-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.rt-card{padding:22px 20px;border-radius:24px;border:1px solid rgba(255,255,255,0.06);text-align:center;}
+.rt-card.green{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.2);}
+.rt-card.red  {background:rgba(244,63,94,0.12);border-color:rgba(244,63,94,0.2);}
+.rt-card.yellow{background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.2);}
+.rt-card.blue {background:rgba(73,197,255,0.1);border-color:rgba(73,197,255,0.2);}
+.rt-num{font-size:2.4rem;font-weight:800;line-height:1;margin-bottom:8px;}
+.rt-label{font-size:0.82rem;color:var(--muted);letter-spacing:.03em;}
+
+/* Diagnóstico grid */
+.diag-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;}
+.diag-card{padding:26px;border-radius:28px;background:linear-gradient(180deg,rgba(8,13,31,0.95),rgba(9,16,38,0.9));border:1px solid rgba(255,255,255,0.06);box-shadow:var(--shadow);}
+.diag-card.span2{grid-column:1 / -1;}
+.diag-card-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.diag-icon{font-size:1.5rem;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:rgba(73,197,255,0.12);}
+.diag-card-header h3{margin:0;font-size:1.05rem;color:#b9d8ff;flex:1;}
+.badge{padding:5px 12px;border-radius:999px;font-size:.75rem;font-weight:700;letter-spacing:.05em;}
+.badge-ok   {background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);}
+.badge-error{background:rgba(244,63,94,0.15); color:#f87171;border:1px solid rgba(244,63,94,0.3);}
+.badge-warn {background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);}
+
+.diag-rows{display:flex;flex-direction:column;gap:0;}
+.diag-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:.93rem;color:#a0b4cc;}
+.diag-row:last-child{border-bottom:none;}
+.val{font-weight:700;color:#e8f1ff;font-family:"Roboto Mono",monospace;}
+.val.warn{color:#fbbf24;}
+.val.error{color:#f87171;}
+
+/* Tabla de integridad */
+.tabla-checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:4px;}
+.check-item{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;font-size:.88rem;}
+.check-item.ok  {background:rgba(16,185,129,0.1);color:#6ee7b7;}
+.check-item.fail{background:rgba(244,63,94,0.1);color:#fca5a5;}
+.check-dot{font-size:.95rem;font-weight:700;}
+.check-name{font-family:"Roboto Mono",monospace;font-size:.82rem;}
+
+/* Tabla acciones */
+.diag-table{width:100%;border-collapse:collapse;color:#d8e4ff;}
+.diag-table th{padding:10px 12px;text-align:left;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:#8db6ff;border-bottom:1px solid rgba(255,255,255,.08);}
+.diag-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.05);}
+.diag-table tbody tr:last-child td{border-bottom:none;}
+.pill{padding:3px 10px;border-radius:999px;font-size:.78rem;font-weight:700;}
+.pill-ok  {background:rgba(16,185,129,0.18);color:#34d399;}
+.pill-warn{background:rgba(245,158,11,0.18);color:#fbbf24;}
+.empty{color:var(--muted);}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;}
+  .realtime-grid{grid-template-columns:repeat(2,1fr);}
+  .diag-grid{grid-template-columns:1fr;}
+  .diag-card.span2{grid-column:auto;}
+}
+</style>
+
+<script>
+function updateClock(){
+    const now=new Date();
+    document.getElementById("clock").textContent=now.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});
+}
+setInterval(updateClock,1000);
+updateClock();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Profesores</title>
+    <link rel="stylesheet" href="/static/css/tde_epic.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="titulo">⚡ Gestión de Profesores</h1>
+    <p class="subtitulo">Centro de Control TDE — Administración de Personal Docente</p>
+
+    <a href="/panel_tde" class="btn-volver">⟵ Volver al Panel Central</a>
+
+    <!-- Tarjeta añadir profesor -->
+    <div class="card neon-border">
+        <h2><i class="fas fa-user-plus"></i> Registrar Nuevo Profesor</h2>
+
+        <form action="/add_profesor" method="POST" class="formulario">
+            <label>Usuario</label>
+            <input type="text" name="usuario" required>
+
+            <label>Rol</label>
+            <select name="rol" required>
+                <option value="profesor">Profesor</option>
+                <option value="tde">TDE</option>
+                <option value="tecnico">Técnico</option>
+            </select>
+
+            <label>Contraseña</label>
+            <input type="password" name="password" required>
+
+            <label>Rol</label>
+            <select name="rol" required>
+                <option value="profesor">Profesor</option>
+                <option value="tde">TDE</option>
+                <option value="tecnico">Técnico</option>
+            </select>
+
+            <button class="btn-guardar">⚡ Registrar</button>
+        </form>
+    </div>
+
+    <!-- Tarjeta listado -->
+    <div class="card neon-border">
+        <h2><i class="fas fa-users"></i> Personal Registrado</h2>
+
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for p in profesores %}
+                <tr>
+                    <td>{{ p.id }}</td>
+                    <td>{{ p.usuario }}</td>
+                    <td>{{ p.rol }}</td>
+                    <td>
+                        <form action="/delete_profesor" method="POST" style="display:inline;">
+                            <input type="hidden" name="id" value="{{ p.id }}">
+                            <button class="btn-eliminar">✖ Eliminar</button>
+                        </form>
+
+                        <a href="/editar_profesor?id={{ p.id }}" class="btn-editar">✎ Editar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

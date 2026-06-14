@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cursos</title>
+    <link rel="stylesheet" href="/static/css/tde_cursos.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="titulo">📘 Gestión de Cursos</h1>
+    <p class="subtitulo">Panel Futurista de Administración Académica</p>
+
+    <a href="/panel_tde" class="btn-volver">⟵ Volver al Panel Central</a>
+
+    <div class="grid-cursos">
+
+        {% for c in cursos %}
+        <div class="curso-card">
+            <h3>{{ c.nombre }}</h3>
+            <p>{{ c.descripcion }}</p>
+
+            <div class="acciones">
+                <a href="/editar_curso?id={{ c.id }}" class="btn-editar">✎ Editar</a>
+                <form action="/delete_curso" method="POST">
+                    <input type="hidden" name="id" value="{{ c.id }}">
+                    <button class="btn-eliminar">✖ Eliminar</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+
+        <a href="/nuevo_curso" class="curso-card add-card">
+            <span class="plus">＋</span>
+            <p>Nuevo Curso</p>
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>
