@@ -22,7 +22,7 @@ app.secret_key = "TU_CLAVE_SECRETA"
 def get_centro_id():
     """Devuelve el centro_id de la sesión activa."""
     return session.get("centro_id")
-.
+
 
 
 
