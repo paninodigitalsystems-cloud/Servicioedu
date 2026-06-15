@@ -1,0 +1,103 @@
+/* TARJETA PRINCIPAL */
+.card {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 25px;
+    background: rgba(0, 20, 40, 0.55);
+    border-radius: 20px;
+    border: 2px solid rgba(0, 200, 255, 0.25);
+    box-shadow: 0 0 25px rgba(0, 200, 255, 0.15);
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+/* TÍTULO */
+.card h2 {
+    color: #00eaff;
+    text-shadow: 0 0 15px #00eaff;
+    margin-bottom: 20px;
+    font-size: 26px;
+}
+
+/* LABELS */
+.card label {
+    display: block;
+    text-align: left;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #7ac7ff;
+    font-size: 14px;
+}
+
+/* INPUTS Y TEXTAREA */
+.card input,
+.card textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 200, 255, 0.3);
+    background: rgba(0, 20, 40, 0.4);
+    color: #dff6ff;
+    font-size: 15px;
+    outline: none;
+    transition: 0.25s;
+}
+
+.card input:focus,
+.card textarea:focus {
+    border-color: #00eaff;
+    box-shadow: 0 0 12px rgba(0, 200, 255, 0.6);
+}
+
+/* TEXTAREA */
+.card textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+/* BOTÓN */
+.btn-enviar {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: #00b7ff;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+    box-shadow: 0 0 15px rgba(0, 183, 255, 0.5);
+}
+
+.btn-enviar:hover {
+    background: #0099d6;
+    box-shadow: 0 0 25px rgba(0, 183, 255, 0.9);
+    transform: translateY(-3px);
+}
+/* TOAST FLOTANTE */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(0, 0, 0, 0.85); /* Fondo negro */
+    color: #4dff88; /* Verde holográfico */
+    padding: 15px 22px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 0 20px rgba(0, 255, 100, 0.4);
+    border: 1px solid rgba(0, 255, 100, 0.4);
+    text-shadow: 0 0 10px #4dff88;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 9999;
+}
+
+/* Cuando está visible */
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}

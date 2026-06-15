@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes — Panel Técnico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">⚙️</span>
+            <span class="logo-text">MANTENIMIENTO</span>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/panel_tecnico" class="sidebar-link">🛠️ Panel técnico</a>
+            <a href="/diagnostico"   class="sidebar-link">🔧 Diagnóstico</a>
+            <a href="/sistema"       class="sidebar-link">📦 Sistema</a>
+            <a href="/reportes"      class="sidebar-link active">📄 Reportes</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/logout" class="sidebar-link logout-link">🚪 Cerrar sesión</a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div>
+                <h1 class="titulo-3d">Reportes del sistema</h1>
+                <p class="welcome">Técnico: {{ usuario }}</p>
+            </div>
+            <div class="topbar-right">
+                <div class="status-indicator">🟢 Sistema operativo</div>
+                <div class="clock" id="clock"></div>
+            </div>
+        </header>
+
+        <!-- KPI STRIP -->
+        <div class="kpi-strip">
+            <div class="kpi-card">
+                <div class="kpi-icon">📤</div>
+                <div>
+                    <div class="kpi-label">Salidas totales</div>
+                    <div class="kpi-value">{{ total_salidas }}</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">🚽</div>
+                <div>
+                    <div class="kpi-label">Entradas al baño</div>
+                    <div class="kpi-value">{{ total_banio }}</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">📅</div>
+                <div>
+                    <div class="kpi-label">Salidas hoy</div>
+                    <div class="kpi-value accent">{{ salidas_hoy }}</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">⏳</div>
+                <div>
+                    <div class="kpi-label">Solicitudes pendientes</div>
+                    <div class="kpi-value {% if pendientes > 0 %}warn{% endif %}">{{ pendientes }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRID PRINCIPAL -->
+        <div class="rep-grid">
+
+            <!-- ACTIVIDAD 7 DÍAS -->
+            <div class="rep-card span-2">
+                <div class="rep-card-hdr">
+                    <span class="rep-card-title">Actividad últimos 7 días</span>
+                    <span class="pulse-dot"></span>
+                </div>
+                {% if salidas_por_dia %}
+                <div class="bar-chart-wrap">
+                    {% set max_val = salidas_por_dia | map(attribute='total') | max %}
+                    {% for row in salidas_por_dia %}
+                    <div class="bar-col">
+                        <div class="bar-val-lbl">{{ row.total }}</div>
+                        <div class="bar-outer">
+                            <div class="bar-inner" style="height: {{ ((row.total / max_val) * 100) | int }}%"></div>
+                        </div>
+                        <div class="bar-date-lbl">{{ row.dia[5:] }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">Sin datos de los últimos 7 días</div>
+                {% endif %}
+            </div>
+
+            <!-- TOP ALUMNOS -->
+            <div class="rep-card">
+                <div class="rep-card-hdr">
+                    <span class="rep-card-title">Top alumnos por salidas</span>
+                </div>
+                {% if top_alumnos %}
+                <table class="rep-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Alumno</th>
+                            <th>Curso</th>
+                            <th>Salidas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in top_alumnos %}
+                        <tr>
+                            <td class="rank-cell">
+                                {% if loop.index == 1 %}🥇
+                                {% elif loop.index == 2 %}🥈
+                                {% elif loop.index == 3 %}🥉
+                                {% else %}{{ loop.index }}{% endif %}
+                            </td>
+                            <td class="name-cell">{{ a.nombre }}</td>
+                            <td><span class="tag">{{ a.curso }}</span></td>
+                            <td><span class="num-badge">{{ a.total }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">Sin datos</div>
+                {% endif %}
+            </div>
+
+            <!-- TIEMPO EN BAÑO -->
+            <div class="rep-card">
+                <div class="rep-card-hdr">
+                    <span class="rep-card-title">Tiempo promedio en baño</span>
+                </div>
+                {% if top_tiempo %}
+                <table class="rep-table">
+                    <thead>
+                        <tr>
+                            <th>Alumno</th>
+                            <th>Promedio</th>
+                            <th>Máx.</th>
+                            <th>Viajes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in top_tiempo %}
+                        <tr>
+                            <td class="name-cell">{{ t.nombre }}</td>
+                            <td>
+                                <span class="min-badge {% if t.promedio > 10 %}bad{% elif t.promedio > 5 %}warn{% else %}ok{% endif %}">
+                                    {{ t.promedio }} min
+                                </span>
+                            </td>
+                            <td class="muted-cell">{{ t.maximo }} min</td>
+                            <td><span class="num-badge">{{ t.total }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">Sin datos</div>
+                {% endif %}
+            </div>
+
+            <!-- SALIDAS POR CURSO -->
+            <div class="rep-card">
+                <div class="rep-card-hdr">
+                    <span class="rep-card-title">Salidas por curso</span>
+                </div>
+                {% if salidas_por_curso %}
+                <div class="curso-bars">
+                    {% set max_curso = salidas_por_curso | map(attribute='total') | max %}
+                    {% for c in salidas_por_curso %}
+                    <div class="curso-row">
+                        <div class="curso-name">{{ c.curso }}</div>
+                        <div class="curso-bar-wrap">
+                            <div class="curso-bar-fill" style="width: {{ ((c.total / max_curso) * 100) | int }}%"></div>
+                        </div>
+                        <div class="curso-total">{{ c.total }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">Sin datos</div>
+                {% endif %}
+            </div>
+
+            <!-- SOLICITUDES DE RESET -->
+            <div class="rep-card">
+                <div class="rep-card-hdr">
+                    <span class="rep-card-title">Últimas solicitudes de reset</span>
+                </div>
+                {% if solicitudes %}
+                <table class="rep-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Comentario</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in solicitudes %}
+                        <tr>
+                            <td class="name-cell">{{ s.usuario }}</td>
+                            <td class="muted-cell trunc">{{ s.comentario or '—' }}</td>
+                            <td>
+                                <span class="estado-badge {% if s.estado == 'pendiente' %}warn{% else %}ok{% endif %}">
+                                    {{ s.estado }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">Sin solicitudes recientes</div>
+                {% endif %}
+            </div>
+
+        </div><!-- /rep-grid -->
+
+    </main>
+</div>
+
+<style>
+:root {
+    --bg:      #070d13;
+    --bg2:     #0c1620;
+    --bg3:     #101e2a;
+    --border:  rgba(0,180,216,.12);
+    --border2: rgba(0,180,216,.28);
+    --accent:  #00b4d8;
+    --accent2: #0077b6;
+    --green:   #2dd4a0;
+    --red:     #f25c5c;
+    --amber:   #f4a942;
+    --muted:   #4a7a90;
+    --text:    #cce4f0;
+    --mono:    'JetBrains Mono', monospace;
+    --sans:    'Space Grotesk', sans-serif;
+    --shadow:  0 18px 50px rgba(0,0,0,.55);
+    --radius:  14px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,180,216,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,180,216,.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+}
+
+/* LAYOUT */
+.layout {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* SIDEBAR */
+.sidebar {
+    background: rgba(12,22,32,.92);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 18px;
+    backdrop-filter: blur(14px);
+    position: sticky; top: 20px; height: fit-content;
+}
+.sidebar-logo { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+}
+.logo-text {
+    font-family: var(--mono); font-size: .82rem; font-weight: 600;
+    color: var(--accent); letter-spacing: .1em; text-transform: uppercase;
+}
+.sidebar-menu { display: flex; flex-direction: column; gap: 6px; }
+.sidebar-link {
+    display: block; padding: 11px 14px; border-radius: 10px;
+    color: var(--text); text-decoration: none;
+    font-size: .88rem; font-weight: 500;
+    background: transparent; border: 1px solid transparent;
+    transition: .18s ease;
+}
+.sidebar-link:hover { background: rgba(0,180,216,.10); border-color: var(--border); }
+.sidebar-link.active { background: rgba(0,180,216,.16); border-color: var(--border2); color: white; }
+.sidebar-footer { margin-top: auto; }
+.logout-link { background: rgba(242,92,92,.10); color: #f47f7f; }
+.logout-link:hover { background: rgba(242,92,92,.18); border-color: rgba(242,92,92,.3); }
+
+/* MAIN */
+.main { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+/* TOPBAR */
+.topbar {
+    background: rgba(12,22,32,.97);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 24px;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    backdrop-filter: blur(12px);
+}
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.titulo-3d {
+    font-family: var(--mono); font-size: 1.4rem; font-weight: 700;
+    color: var(--accent); letter-spacing: .03em; text-transform: uppercase;
+}
+.welcome { color: var(--muted); font-size: .83rem; margin-top: 4px; }
+.status-indicator {
+    padding: 7px 14px; border-radius: 999px;
+    background: rgba(45,212,160,.10); border: 1px solid rgba(45,212,160,.25);
+    color: var(--green); font-weight: 600; font-size: .78rem;
+    font-family: var(--mono); letter-spacing: .04em;
+}
+.clock {
+    font-family: var(--mono); font-size: .92rem; color: var(--accent);
+    background: rgba(0,180,216,.07); border: 1px solid rgba(0,180,216,.15);
+    border-radius: 7px; padding: 5px 12px;
+}
+
+/* KPI STRIP */
+.kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+.kpi-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
+    transition: border-color .2s;
+}
+.kpi-card:hover { border-color: var(--border2); }
+.kpi-icon {
+    width: 44px; height: 44px;
+    background: rgba(0,180,216,.10); border: 1px solid var(--border2);
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0;
+}
+.kpi-label {
+    font-family: var(--mono); font-size: .68rem; font-weight: 600;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .1em;
+    margin-bottom: 5px;
+}
+.kpi-value {
+    font-size: 1.6rem; font-weight: 700; color: white; line-height: 1;
+    font-family: var(--mono);
+}
+.kpi-value.accent { color: var(--accent); }
+.kpi-value.warn   { color: var(--amber); }
+
+/* REPORT GRID */
+.rep-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+.span-2 { grid-column: span 2; }
+
+.rep-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    transition: border-color .2s;
+}
+.rep-card:hover { border-color: var(--border2); }
+
+.rep-card-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+}
+.rep-card-title {
+    font-family: var(--mono); font-size: .72rem; font-weight: 600;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .1em;
+}
+.pulse-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); animation: blink 1.5s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* BAR CHART */
+.bar-chart-wrap {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 160px;
+    padding: 0 4px;
+}
+.bar-col {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    height: 100%; justify-content: flex-end; gap: 6px;
+}
+.bar-val-lbl {
+    font-family: var(--mono); font-size: .68rem; color: var(--accent);
+    font-weight: 600;
+}
+.bar-outer {
+    width: 100%; flex: 1;
+    display: flex; align-items: flex-end;
+    background: rgba(0,180,216,.06); border-radius: 6px 6px 0 0;
+    border: 1px solid rgba(0,180,216,.10); border-bottom: none;
+}
+.bar-inner {
+    width: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+    border-radius: 5px 5px 0 0;
+    min-height: 4px;
+    transition: height .6s ease;
+}
+.bar-date-lbl {
+    font-family: var(--mono); font-size: .65rem; color: var(--muted);
+    white-space: nowrap;
+}
+
+/* TABLES */
+.rep-table {
+    width: 100%; border-collapse: collapse;
+    font-size: .82rem;
+}
+.rep-table thead th {
+    font-family: var(--mono); font-size: .65rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); padding: 0 10px 10px;
+    border-bottom: 1px solid var(--border); text-align: left;
+}
+.rep-table tbody tr {
+    border-bottom: 1px solid rgba(0,180,216,.06);
+    transition: background .12s;
+}
+.rep-table tbody tr:last-child { border-bottom: none; }
+.rep-table tbody tr:hover { background: rgba(0,180,216,.04); }
+.rep-table td { padding: 9px 10px; vertical-align: middle; }
+
+.name-cell { color: var(--text); font-weight: 500; }
+.muted-cell { color: var(--muted); font-family: var(--mono); font-size: .78rem; }
+.rank-cell { font-size: 1rem; text-align: center; width: 32px; }
+.trunc { max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.tag {
+    background: rgba(0,180,216,.10); border: 1px solid var(--border2);
+    color: var(--accent); font-family: var(--mono); font-size: .68rem;
+    padding: 2px 8px; border-radius: 5px;
+}
+.num-badge {
+    background: rgba(0,180,216,.14); border: 1px solid rgba(0,180,216,.25);
+    color: var(--accent); font-family: var(--mono); font-weight: 700;
+    font-size: .78rem; padding: 2px 9px; border-radius: 6px;
+}
+.min-badge {
+    font-family: var(--mono); font-size: .78rem; font-weight: 600;
+    padding: 2px 9px; border-radius: 6px;
+}
+.min-badge.ok   { background: rgba(45,212,160,.12); color: var(--green); border: 1px solid rgba(45,212,160,.25); }
+.min-badge.warn { background: rgba(244,169,66,.12); color: var(--amber); border: 1px solid rgba(244,169,66,.25); }
+.min-badge.bad  { background: rgba(242,92,92,.12);  color: var(--red);   border: 1px solid rgba(242,92,92,.25); }
+.estado-badge {
+    font-family: var(--mono); font-size: .7rem; font-weight: 700;
+    padding: 2px 9px; border-radius: 5px; text-transform: uppercase; letter-spacing: .05em;
+}
+.estado-badge.ok   { background: rgba(45,212,160,.12); color: var(--green); border: 1px solid rgba(45,212,160,.25); }
+.estado-badge.warn { background: rgba(244,169,66,.12); color: var(--amber); border: 1px solid rgba(244,169,66,.25); }
+
+/* CURSO BARS */
+.curso-bars { display: flex; flex-direction: column; gap: 10px; }
+.curso-row { display: flex; align-items: center; gap: 10px; }
+.curso-name {
+    font-family: var(--mono); font-size: .78rem; color: var(--text);
+    width: 80px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.curso-bar-wrap {
+    flex: 1; height: 8px;
+    background: rgba(0,180,216,.07); border: 1px solid rgba(0,180,216,.10);
+    border-radius: 4px; overflow: hidden;
+}
+.curso-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    min-width: 4px;
+    transition: width .6s ease;
+}
+.curso-total {
+    font-family: var(--mono); font-size: .78rem; font-weight: 700;
+    color: var(--accent); width: 28px; text-align: right; flex-shrink: 0;
+}
+
+/* EMPTY */
+.empty-state {
+    text-align: center; padding: 28px;
+    font-family: var(--mono); font-size: .78rem; color: var(--muted);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1080px) {
+    .layout { grid-template-columns: 1fr; }
+    .rep-grid { grid-template-columns: 1fr; }
+    .span-2 { grid-column: span 1; }
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+
+<script>
+function pad(n){ return String(n).padStart(2,'0'); }
+function tick(){
+    const d = new Date();
+    document.getElementById('clock').textContent =
+        pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+}
+tick(); setInterval(tick, 1000);
+</script>
+
+</body>
+</html>

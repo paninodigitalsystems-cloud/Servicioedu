@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Profesor</title>
+    <link rel="stylesheet" href="/static/coordinador.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <h1>Editar Profesor</h1>
+        <p class="welcome">Modifica los datos del docente</p>
+    </header>
+
+    <!-- Botón volver -->
+    <a href="/gestion_profesores" class="btn-volver">⬅ Volver a gestión de profesores</a>
+
+    <!-- Tarjeta de edición -->
+    <div class="form-card">
+        <h2>Datos del profesor</h2>
+
+        <form action="/update_profesor" method="post">
+
+            <input type="hidden" name="id" value="{{ profesor.id }}">
+
+            <label>Usuario:</label>
+            <input type="text" name="usuario" value="{{ profesor.usuario }}" required>
+
+            <label>Rol:</label>
+            <select name="rol" required>
+                <option value="profesor" {% if profesor.rol == 'profesor' %}selected{% endif %}>Profesor</option>
+                <option value="tde" {% if profesor.rol == 'tde' %}selected{% endif %}>TDE</option>
+                <option value="tecnico" {% if profesor.rol == 'tecnico' %}selected{% endif %}>Técnico</option>
+            </select>
+
+            <label>Nueva contraseña:</label>
+            <input type="password" name="password" placeholder="Dejar en blanco para no cambiar">
+
+            <button class="btn-guardar">Guardar cambios</button>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

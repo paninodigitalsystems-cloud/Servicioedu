@@ -1,0 +1,115 @@
+/* FONDO GENERAL */
+body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: radial-gradient(circle at top, #1f4037, #16222a);
+    margin: 0;
+    color: #f5f5f5;
+}
+
+/* TARJETAS TIPO CRYSTAL */
+.card2 {
+    width: 280px;
+    background: linear-gradient(145deg, #1f2b38, #16202b);
+    padding: 25px;
+    border-radius: 16px;
+    color: white;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+    transition: 0.25s;
+    cursor: pointer;
+}
+
+.card2:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.45);
+}
+
+.card2 h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #4fc3f7;
+}
+
+.card2 p {
+    margin-top: 10px;
+    opacity: 0.8;
+    font-size: 14px;
+}
+
+/* MEN� CRYSTAL */
+.top-menu-crystal {
+    display: flex;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 15px 25px;
+    border-radius: 14px;
+    margin: 20px auto 30px auto;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    width: fit-content;
+}
+
+.top-menu-crystal a {
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    transition: 0.25s ease;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.top-menu-crystal a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* MENSAJE VAC�O */
+.mensaje-vacio {
+    text-align: center;
+    padding: 25px;
+    color: #b0bec5;
+    font-size: 16px;
+    font-style: italic;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+}
+
+
+.card {
+    background: rgba(0, 20, 40, 0.55);
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid rgba(0, 200, 255, 0.25);
+    box-shadow: 0 0 20px rgba(0, 200, 255, 0.15);
+    margin-top: 25px;
+}
+
+.card h2 {
+    color: #00eaff;
+    text-shadow: 0 0 10px #00eaff;
+    margin-bottom: 15px;
+}
+
+.card table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #dff6ff;
+}
+
+.card table th {
+    background: rgba(0, 200, 255, 0.15);
+    padding: 10px;
+    text-shadow: 0 0 10px #00eaff;
+}
+
+.card table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 200, 255, 0.1);
+}
+
+.card table tr:hover {
+    background: rgba(0, 200, 255, 0.08);
+}

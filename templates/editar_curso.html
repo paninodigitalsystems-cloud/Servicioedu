@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Curso</title>
+    <link rel="stylesheet" href="/static/css/tde_holo.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="titulo">✎ Editar Curso</h1>
+    <p class="subtitulo">Interfaz holográfica de modificación</p>
+
+    <a href="/gestion_cursos" class="btn-volver">⟵ Volver</a>
+
+    <div class="card holo-border">
+        <form action="/update_curso" method="POST">
+
+            <input type="hidden" name="id" value="{{ curso.id }}">
+
+            <label>Nombre del curso</label>
+            <input type="text" name="nombre" value="{{ curso.nombre }}" required>
+
+            <label>Descripción</label>
+            <textarea name="descripcion" required>{{ curso.descripcion }}</textarea>
+
+            <button class="btn-guardar">💾 Guardar cambios</button>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

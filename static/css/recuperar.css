@@ -1,0 +1,102 @@
+/* CONTENEDOR PRINCIPAL */
+.reset-wrapper {
+    margin: 40px auto;
+    max-width: 900px;
+    text-align: center;
+}
+
+/* CABECERA */
+.reset-header {
+    margin-bottom: 25px;
+}
+
+.reset-icon {
+    font-size: 60px;
+    text-shadow: 0 0 20px #00eaff;
+    animation: pulseIcon 2s infinite;
+}
+
+@keyframes pulseIcon {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+.reset-header h2 {
+    font-size: 32px;
+    color: #00eaff;
+    text-shadow: 0 0 15px #00eaff;
+    margin: 10px 0 5px;
+}
+
+.reset-sub {
+    color: #7ac7ff;
+    font-size: 15px;
+}
+
+/* TARJETA HOLOGRÁFICA */
+.reset-card {
+    background: rgba(0, 20, 40, 0.55);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(0, 200, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 200, 255, 0.25);
+}
+
+/* TABLA */
+.reset-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #dff6ff;
+}
+
+.reset-table th {
+    padding: 12px;
+    background: rgba(0, 200, 255, 0.15);
+    border-bottom: 1px solid rgba(0, 200, 255, 0.3);
+    text-shadow: 0 0 10px #00eaff;
+    font-size: 15px;
+}
+
+.reset-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(0, 200, 255, 0.1);
+    font-size: 14px;
+}
+
+.reset-table tr:hover {
+    background: rgba(0, 200, 255, 0.08);
+    transition: 0.2s;
+}
+
+/* BOTÓN FUTURISTA */
+.btn-reset-futurista {
+    background: #00b7ff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: 0.25s;
+    font-weight: 600;
+    box-shadow: 0 0 15px rgba(0, 183, 255, 0.5);
+}
+
+.btn-reset-futurista:hover {
+    background: #0099d6;
+    box-shadow: 0 0 25px rgba(0, 183, 255, 0.9);
+    transform: translateY(-3px);
+}
+
+/* MENSAJE CUANDO NO HAY SOLICITUDES */
+.no-solicitudes {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 255, 100, 0.1);
+    border: 1px solid rgba(0, 255, 100, 0.4);
+    border-radius: 10px;
+    color: #4dff88;
+    text-shadow: 0 0 10px #4dff88;
+    font-size: 15px;
+}

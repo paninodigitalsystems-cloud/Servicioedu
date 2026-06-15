@@ -1,0 +1,228 @@
+/* ============================
+   LAYOUT GENERAL
+============================ */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #111;
+    color: #fff;
+}
+
+.cons-layout {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+
+/* ============================
+   HEADER
+============================ */
+
+.cons-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.cons-title {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.cons-subtitle {
+    font-size: 15px;
+    opacity: 0.7;
+}
+
+
+/* ============================
+   BUSCADOR
+============================ */
+
+.cons-search-section {
+    margin-bottom: 25px;
+}
+
+.cons-search-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.cons-search-row {
+    display: flex;
+    gap: 10px;
+}
+
+.cons-search-input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 16px;
+    background: #222;
+    color: #fff;
+}
+
+.cons-search-input::placeholder {
+    color: #777;
+}
+
+.cons-search-btn {
+    padding: 12px 18px;
+    background: #0078ff;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.cons-search-btn:hover {
+    background: #0a84ff;
+}
+
+.cons-search-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cons-search-help {
+    margin-top: 8px;
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+
+/* ============================
+   TARJETA DEL ALUMNO
+============================ */
+
+.cons-card-section {
+    margin-top: 20px;
+}
+
+#consList {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    min-height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cons-card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.cons-photo-wrap {
+    text-align: center;
+}
+
+.cons-photo {
+    width: 80px;
+    height: 80px;
+    background: #333;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    overflow: hidden;
+}
+
+.cons-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cons-photo-name {
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.cons-data {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cons-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.cons-course {
+    font-size: 15px;
+    opacity: 0.7;
+}
+
+.cons-status-block {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.cons-status-ok {
+    background: rgba(0, 255, 0, 0.15);
+    color: #00ff00;
+}
+
+.cons-status-ko {
+    background: rgba(255, 0, 0, 0.15);
+    color: #ff4444;
+}
+
+
+/* ============================
+   PLACEHOLDER
+============================ */
+
+.cons-card-placeholder {
+    text-align: center;
+    opacity: 0.7;
+}
+
+.cons-card-placeholder-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.cons-card-placeholder-text {
+    font-size: 16px;
+}
+
+
+/* ============================
+   TOASTS
+============================ */
+
+.cons-toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cons-toast {
+    background: #222;
+    padding: 12px 18px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    box-shadow: 0 0 10px #000;
+}

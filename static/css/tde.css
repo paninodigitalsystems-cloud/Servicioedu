@@ -1,0 +1,116 @@
+body {
+    background: #f4f6f9;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 40px auto;
+}
+
+.titulo {
+    font-size: 36px;
+    color: #1e2a38;
+    margin-bottom: 5px;
+}
+
+.subtitulo {
+    color: #3a7bd5;
+    margin-bottom: 20px;
+}
+
+.btn-volver {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #3a7bd5;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #1e2a38;
+}
+
+.formulario label {
+    display: block;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.formulario input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.btn-guardar {
+    margin-top: 15px;
+    background: #3a7bd5;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-guardar:hover {
+    background: #2f6bb8;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.tabla th {
+    background: #1e2a38;
+    color: white;
+    padding: 12px;
+}
+
+.tabla td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.btn-eliminar {
+    background: #d9534f;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-eliminar:hover {
+    background: #c9302c;
+}
+
+.btn-editar {
+    background: #5bc0de;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.btn-editar:hover {
+    background: #31b0d5;
+}

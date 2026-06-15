@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard TDE</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/tde_dashboard.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-dot"></span>
+            <span class="brand-name">TDE Control</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/panel_tde" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Panel TDE
+            </a>
+            <a href="/dashboard" class="nav-item active">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Analytics
+            </a>
+            <a href="/gestion_profesores" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Profesores
+            </a>
+            <a href="/gestion_alumnos" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                Alumnos
+            </a>
+            <a href="/gestion_cursos" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Cursos
+            </a>
+            <a href="/hall_of_fame" class="nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Hall of Fame
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-pill">
+                <div class="user-avatar">{{ usuario[0]|upper if usuario else 'U' }}</div>
+                <span>{{ usuario }}</span>
+            </div>
+            <a href="/logout" class="logout-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <p class="page-eyebrow">Analytics</p>
+                <h1 class="page-title">Dashboard General</h1>
+            </div>
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                <span id="live-label">En vivo</span>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-row">
+            <div class="stat-box">
+                <p class="stat-label">Profesores</p>
+                <p class="stat-num">{{ total_profesores }}</p>
+                <p class="stat-sub">Registrados</p>
+            </div>
+            <div class="stat-box">
+                <p class="stat-label">Alumnos</p>
+                <p class="stat-num">{{ total_alumnos }}</p>
+                <p class="stat-sub">En el sistema</p>
+            </div>
+            <div class="stat-box">
+                <p class="stat-label">Cursos</p>
+                <p class="stat-num">{{ total_cursos }}</p>
+                <p class="stat-sub">Disponibles</p>
+            </div>
+            <div class="stat-box accent">
+                <p class="stat-label">Movimientos</p>
+                <p class="stat-num" id="stat-total">{{ total_registros }}</p>
+                <p class="stat-sub">Total histórico</p>
+            </div>
+        </div>
+
+        <!-- GRÁFICAS -->
+        <div class="charts-row">
+            <div class="chart-box wide">
+                <div class="chart-header">
+                    <h2>Actividad anual</h2>
+                    <span class="chart-badge">{{ meses[-1] }}</span>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="historialAnual"></canvas>
+                </div>
+            </div>
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h2>Alumnos por curso</h2>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="alumnosBar"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2>Historial de movimientos</h2>
+                <div class="header-actions">
+                    <span class="update-ts" id="update-ts">—</span>
+                    <button onclick="window.print()" class="btn-ghost">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        Imprimir
+                    </button>
+                </div>
+            </div>
+
+            <form method="GET" action="/dashboard" class="filter-row">
+                <div class="filter-group">
+                    <label>Curso</label>
+                    <select name="curso">
+                        <option value="">Todos</option>
+                        {% for c in cursos %}
+                            <option value="{{ c['curso'] }}" {% if filtro_curso == c['curso'] %}selected{% endif %}>{{ c['curso'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Alumno</label>
+                    <input type="text" name="alumno" value="{{ filtro_alumno }}" placeholder="Buscar alumno…">
+                </div>
+                <div class="filter-group">
+                    <label>Fecha</label>
+                    <input type="date" name="fecha" value="{{ filtro_fecha }}">
+                </div>
+                <button type="submit" class="btn-primary">Filtrar</button>
+            </form>
+
+            <!-- TABLA -->
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Alumno</th>
+                            <th>Profesor</th>
+                            <th>Curso</th>
+                            <th>Salida</th>
+                            <th>Regreso</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-historial">
+                        <!-- Rellena JS -->
+                        <tr class="loading-row">
+                            <td colspan="6">Cargando historial…</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <span id="count-label">—</span>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- CHARTS INIT -->
+<script>
+const meses = {{ meses | safe }};
+const actividad = {{ actividad_mensual | safe }};
+const cursoNames = {{ nombres_cursos | safe }};
+const alumnosPorCurso = {{ alumnos_por_curso | safe }};
+
+const chartOpts = (xColor, yColor) => ({
+    plugins: { legend: { labels: { color: xColor, font: { family: "'Inter', sans-serif", size: 12 } } } },
+    scales: {
+        x: { ticks: { color: yColor, font: { size: 11 } }, grid: { color: 'rgba(150,150,150,0.1)' } },
+        y: { ticks: { color: yColor, font: { size: 11 } }, grid: { color: 'rgba(150,150,150,0.1)' } }
+    }
+});
+
+const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const textColor = isDark ? '#aaa' : '#666';
+
+new Chart(document.getElementById("historialAnual"), {
+    type: "line",
+    data: {
+        labels: meses,
+        datasets: [{
+            label: "Salidas",
+            data: actividad,
+            borderColor: "#6366f1",
+            backgroundColor: "rgba(99,102,241,0.12)",
+            borderWidth: 2.5,
+            tension: 0.4,
+            fill: true,
+            pointRadius: 4,
+            pointBackgroundColor: "#6366f1",
+            pointBorderColor: "#fff",
+            pointBorderWidth: 2
+        }]
+    },
+    options: { ...chartOpts(textColor, textColor), responsive: true, maintainAspectRatio: false }
+});
+
+new Chart(document.getElementById("alumnosBar"), {
+    type: "bar",
+    data: {
+        labels: cursoNames,
+        datasets: [{
+            label: "Alumnos",
+            data: alumnosPorCurso,
+            backgroundColor: cursoNames.map((_, i) => `hsl(${230 + i * 18}, 70%, ${isDark ? 55 : 50}%)`,
+            borderRadius: 6,
+            borderSkipped: false
+        }]
+    },
+    options: { ...chartOpts(textColor, textColor), responsive: true, maintainAspectRatio: false }
+});
+</script>
+
+<!-- HISTORIAL EN TIEMPO REAL -->
+<script>
+let intervalId = null;
+
+async function fetchHistorial() {
+    const params = new URLSearchParams(window.location.search);
+    try {
+        const res = await fetch("/api/live?" + params.toString());
+        if (!res.ok) return;
+        const data = await res.json();
+        renderTabla(data.historial || []);
+        if (data.total !== undefined) {
+            document.getElementById("stat-total").textContent = data.total;
+        }
+        const now = new Date();
+        document.getElementById("update-ts").textContent =
+            "Actualizado " + now.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    } catch (e) {
+        document.getElementById("live-label").textContent = "Sin conexión";
+    }
+}
+
+function renderTabla(historial) {
+    const tbody = document.getElementById("tabla-historial");
+    const label = document.getElementById("count-label");
+
+    if (!historial.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-row">No hay registros que mostrar</td></tr>`;
+        label.textContent = "0 registros";
+        return;
+    }
+
+    tbody.innerHTML = historial.map(h => {
+        const enBanio = h.estado === "En el baño";
+        return `<tr>
+            <td class="td-name">${esc(h.alumno)}</td>
+            <td class="td-muted">${esc(h.profesor || "—")}</td>
+            <td><span class="badge-curso">${esc(h.curso || "—")}</span></td>
+            <td class="td-mono">${esc(h.hora_salida || "—")}</td>
+            <td class="td-mono">${esc(h.hora_regreso || "—")}</td>
+            <td>
+                <span class="status-pill ${enBanio ? 'status-out' : 'status-in'}">
+                    <span class="status-dot"></span>
+                    ${enBanio ? "En el baño" : "Regresó"}
+                </span>
+            </td>
+        </tr>`;
+    }).join("");
+
+    label.textContent = `${historial.length} registro${historial.length !== 1 ? "s" : ""}`;
+}
+
+function esc(str) {
+    const d = document.createElement("div");
+    d.textContent = str;
+    return d.innerHTML;
+}
+
+fetchHistorial();
+intervalId = setInterval(fetchHistorial, 5000);
+</script>
+
+</body>
+</html>
